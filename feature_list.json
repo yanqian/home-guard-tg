@@ -12,9 +12,9 @@
     {
       "id": "F002",
       "description": "Add /photo for authorized chats to capture one still image and send it through Telegram sendPhoto; keep the command disabled unless explicitly enabled, parse a shell-disabled argv array template containing {output}, let the configured local capture argv and output path determine photo extension, format, and quality without Bot-side transcoding by default, reject disabled or malformed config before capture, reject concurrent media captures, enforce bounded timeout, avoid sendPhoto on failed or empty output, delete temporary photo files after send success or failure, and cover behavior with fake capture and fake Telegram transport tests.",
-      "passes": false,
-      "status": "todo",
-      "attempts": 0,
+      "passes": true,
+      "status": "done",
+      "attempts": 1,
       "last_error": "",
       "priority": "P1"
     },

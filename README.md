@@ -7,7 +7,8 @@ This repository is intentionally separate from `agent-remote-tg`. It does not in
 ## Commands
 
 - `/camera_clip <seconds>` - capture and send a short local camera clip
-- `/status` - show camera command status
+- `/photo` - capture and send one still image
+- `/status` - show media command status
 - `/help` - show commands
 
 ## BotFather Command Menu
@@ -16,6 +17,7 @@ Use BotFather `/setcommands`:
 
 ```text
 camera_clip - Capture a short local camera clip
+photo - Capture one still image
 status - Show Bot status
 help - Show commands
 ```
@@ -29,9 +31,14 @@ TELEGRAM_BOT_TOKEN='...'
 ALLOWED_CHAT_IDS='123456789'
 ENABLE_CAMERA_CLIP_COMMAND=1
 CAMERA_CLIP_COMMAND_JSON='["ffmpeg","-f","avfoundation","-i","0:none","-t","{seconds}","-y","{output}"]'
+ENABLE_PHOTO_COMMAND=1
+PHOTO_COMMAND_JSON='["ffmpeg","-f","avfoundation","-i","0:none","-frames:v","1","-y","{output}"]'
+PHOTO_OUTPUT_FILENAME='photo.jpg'
 ```
 
 `CAMERA_CLIP_COMMAND_JSON` must be a JSON array of strings. It must include `{seconds}` and `{output}`. The Bot runs it with shell execution disabled.
+
+`PHOTO_COMMAND_JSON` must be a JSON array of strings. It must include `{output}`. The Bot runs it with shell execution disabled and sends the captured file through Telegram `sendPhoto` without Bot-side transcoding. `PHOTO_OUTPUT_FILENAME` controls the temporary output filename and extension; it must be a filename, not a path.
 
 Find macOS AVFoundation devices with:
 

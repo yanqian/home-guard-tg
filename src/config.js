@@ -1,6 +1,7 @@
 import { mkdirSync } from "node:fs";
 import { resolve } from "node:path";
 import { parseCameraClipConfig } from "./camera-clip.js";
+import { parsePhotoConfig } from "./photo.js";
 
 export function parseAllowedChatIds(value) {
   if (!value) {
@@ -26,6 +27,11 @@ export function assertStartupEnv(env = process.env) {
     cameraClipConfig: parseCameraClipConfig({
       enabledValue: env.ENABLE_CAMERA_CLIP_COMMAND,
       commandJson: env.CAMERA_CLIP_COMMAND_JSON,
+    }),
+    photoConfig: parsePhotoConfig({
+      enabledValue: env.ENABLE_PHOTO_COMMAND,
+      commandJson: env.PHOTO_COMMAND_JSON,
+      outputFileName: env.PHOTO_OUTPUT_FILENAME,
     }),
   };
 }

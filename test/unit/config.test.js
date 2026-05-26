@@ -24,11 +24,17 @@ test("createStartupContext parses camera config and paths", () => {
       NODE_ENV: "test",
       ENABLE_CAMERA_CLIP_COMMAND: "1",
       CAMERA_CLIP_COMMAND_JSON: JSON.stringify(["fake-camera", "{seconds}", "{output}"]),
+      ENABLE_PHOTO_COMMAND: "1",
+      PHOTO_COMMAND_JSON: JSON.stringify(["fake-photo", "{output}"]),
+      PHOTO_OUTPUT_FILENAME: "still.png",
     }, { rootDir });
     assert.equal(context.telegramBotToken, "token");
     assert.deepEqual(context.allowedChatIds, ["123"]);
     assert.equal(context.cameraClipConfig.enabled, true);
     assert.equal(context.cameraClipConfig.error, null);
+    assert.equal(context.photoConfig.enabled, true);
+    assert.equal(context.photoConfig.error, null);
+    assert.equal(context.photoConfig.outputFileName, "still.png");
     assert.equal(context.rootDir, rootDir);
   } finally {
     rmSync(rootDir, { recursive: true, force: true });

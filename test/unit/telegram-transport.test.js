@@ -41,3 +41,33 @@ test("sendTelegramReply sends videos and cleans up media", async () => {
     rmSync(tempDir, { recursive: true, force: true });
   }
 });
+
+test("sendTelegramReply sends photos and cleans up media", async () => {
+  const tempDir = mkdtempSync(join(tmpdir(), "home-watch-tg-photo-"));
+  const photoPath = join(tempDir, "still.png");
+  const calls = [];
+  try {
+    writeFileSync(photoPath, "fake-photo");
+    await sendTelegramReply({
+      botToken: "token",
+      chatId: "123",
+      reply: {
+        telegramPhoto: {
+          path: photoPath,
+          fileName: "still.png",
+          caption: "photo",
+          cleanupPaths: [tempDir],
+        },
+      },
+      fetchImpl(url, options) {
+        calls.push({ url, options });
+        return Promise.resolve({ ok: true, json: () => Promise.resolve({ ok: true }) });
+      },
+    });
+    assert.equal(calls[0].url, "https://api.telegram.org/bottoken/sendPhoto");
+    assert.equal(calls[0].options.method, "POST");
+    assert.equal(existsSync(photoPath), false);
+  } finally {
+    rmSync(tempDir, { recursive: true, force: true });
+  }
+});

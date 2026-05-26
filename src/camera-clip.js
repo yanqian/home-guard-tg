@@ -3,6 +3,7 @@ import { mkdtemp } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { spawn } from "node:child_process";
+import { acquireMediaCapture, isMediaCaptureActive, releaseMediaCapture } from "./media-capture.js";
 
 const CAMERA_CLIP_DISABLED_RESPONSE = "Camera clip command is disabled.";
 const CAMERA_CLIP_USAGE = "Usage: /camera_clip <seconds> where seconds is an integer from 1 to 10.";
@@ -12,8 +13,6 @@ const CAMERA_CLIP_CAPTURE_FAILED_RESPONSE = "Camera clip capture failed.";
 const CAMERA_CLIP_TIMEOUT_RESPONSE = "Camera clip capture timed out.";
 const CAMERA_CLIP_EMPTY_OUTPUT_RESPONSE = "Camera clip capture did not produce a video.";
 const DEFAULT_CAPTURE_GRACE_MS = 5000;
-
-let activeCapture = false;
 
 export function parseCameraClipConfig({ enabledValue, commandJson }) {
   const enabled = String(enabledValue ?? "").trim() === "1";
@@ -63,12 +62,12 @@ export function parseCameraClipSeconds(args) {
 
 export function getCameraClipStatus(cameraClipConfig) {
   if (!cameraClipConfig?.enabled) {
-    return { enabled: false, configValid: false, activeCapture };
+    return { enabled: false, configValid: false, activeCapture: isMediaCaptureActive() };
   }
   return {
     enabled: true,
     configValid: !cameraClipConfig.error && Array.isArray(cameraClipConfig.argvTemplate),
-    activeCapture,
+    activeCapture: isMediaCaptureActive(),
   };
 }
 
@@ -86,11 +85,10 @@ export async function handleCameraClip(args, cameraClipConfig, options = {}) {
     return { response: CAMERA_CLIP_CONFIG_ERROR_RESPONSE, stateChanged: false };
   }
 
-  if (activeCapture) {
+  if (!acquireMediaCapture()) {
     return { response: CAMERA_CLIP_BUSY_RESPONSE, stateChanged: false };
   }
 
-  activeCapture = true;
   let tempDir = null;
   try {
     tempDir = await mkdtemp(join(tmpdir(), "home-watch-tg-camera-"));
@@ -131,7 +129,7 @@ export async function handleCameraClip(args, cameraClipConfig, options = {}) {
     }
     return { response: CAMERA_CLIP_CAPTURE_FAILED_RESPONSE, stateChanged: false };
   } finally {
-    activeCapture = false;
+    releaseMediaCapture();
   }
 }
 

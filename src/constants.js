@@ -1,5 +1,6 @@
 export const COMMANDS = Object.freeze([
   "/camera_clip",
+  "/photo",
   "/status",
   "/help",
 ]);
@@ -14,6 +15,7 @@ export const UNKNOWN_COMMAND_RESPONSE = "Unknown command.\nUse /help.";
 export const HELP_RESPONSE = [
   "Available commands:",
   "/camera_clip <seconds> - capture and send a short local camera clip",
+  "/photo - capture and send one still image",
   "/status - show Bot status",
   "/help - show this command list",
 ].join("\n");

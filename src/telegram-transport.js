@@ -1,4 +1,5 @@
 import { CAMERA_CLIP_RESPONSES, cleanupCameraClipResult, sendTelegramVideo } from "./camera-clip.js";
+import { PHOTO_RESPONSES, cleanupPhotoResult, sendTelegramPhoto } from "./photo.js";
 
 export function parseTelegramMessage(update) {
   const source = update?.message;
@@ -30,6 +31,29 @@ export async function sendTelegramMessage({ botToken, chatId, text, fetchImpl = 
 }
 
 export async function sendTelegramReply({ botToken, chatId, reply, fetchImpl = globalThis.fetch }) {
+  if (reply?.telegramPhoto) {
+    try {
+      await sendTelegramPhoto({
+        botToken,
+        chatId,
+        photoPath: reply.telegramPhoto.path,
+        fileName: reply.telegramPhoto.fileName,
+        caption: reply.telegramPhoto.caption ?? reply.text,
+        fetchImpl,
+      });
+    } catch {
+      await sendTelegramMessage({
+        botToken,
+        chatId,
+        text: PHOTO_RESPONSES.sendFailed,
+        fetchImpl,
+      });
+    } finally {
+      cleanupPhotoResult(reply.telegramPhoto);
+    }
+    return;
+  }
+
   if (reply?.telegramVideo) {
     try {
       await sendTelegramVideo({
