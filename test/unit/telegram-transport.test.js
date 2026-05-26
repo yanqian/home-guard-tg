@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { existsSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { parseTelegramMessage, sendTelegramReply } from "../../src/telegram-transport.js";
+import { parseTelegramMessage, sendTelegramMessage, sendTelegramReply } from "../../src/telegram-transport.js";
 
 test("parseTelegramMessage extracts chat id and text", () => {
   assert.deepEqual(parseTelegramMessage({ message: { chat: { id: 123 }, text: "/help" } }), {
@@ -11,6 +11,32 @@ test("parseTelegramMessage extracts chat id and text", () => {
     text: "/help",
   });
   assert.equal(parseTelegramMessage({ edited_message: { text: "/help" } }), null);
+});
+
+test("sendTelegramMessage validates Telegram response success", async () => {
+  await assert.rejects(
+    sendTelegramMessage({
+      botToken: "token",
+      chatId: "123",
+      text: "hello",
+      fetchImpl() {
+        return Promise.resolve({ ok: false, json: () => Promise.resolve({ ok: false }) });
+      },
+    }),
+    /Telegram sendMessage failed\./,
+  );
+
+  await assert.rejects(
+    sendTelegramMessage({
+      botToken: "token",
+      chatId: "123",
+      text: "hello",
+      fetchImpl() {
+        return Promise.resolve({ ok: true, json: () => Promise.resolve({ ok: false }) });
+      },
+    }),
+    /Telegram sendMessage failed\./,
+  );
 });
 
 test("sendTelegramReply sends videos and cleans up media", async () => {

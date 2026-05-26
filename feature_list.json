@@ -57,10 +57,10 @@
     {
       "id": "F007",
       "description": "Add /logs for authorized chats to return only recent Bot-owned runtime errors; maintain a bounded persisted local error log on the server, redact secrets, exclude video/photo content and sensitive media data, avoid returning general host logs, bound Telegram output length, and report a clear empty state when no recent errors are available.",
-      "passes": false,
-      "status": "todo",
-      "attempts": 3,
-      "last_error": "`/logs` does not redact secrets/media paths at response time for persisted valid `errorLog` entries, so an existing runtime_state entry containing `token=secret` and `/private/tmp/home-watch/photo.jpg` is returned verbatim. Also, failed text `sendMessage` replies are not recorded as Bot-owned runtime errors because `sendTelegramMessage` does not validate Telegram `ok`/JSON failures.",
+      "passes": true,
+      "status": "done",
+      "attempts": 4,
+      "last_error": "",
       "priority": "P2"
     },
     {

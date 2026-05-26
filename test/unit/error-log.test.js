@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { mkdtempSync, rmSync } from "node:fs";
+import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import {
@@ -46,6 +46,30 @@ test("formatRecentErrorLogs returns clear empty state and bounded recent entries
     assert.match(logs, /2026-05-26T00:00:00.000Z \[telegram_reply\]/);
     assert.match(logs, /token=\[redacted\]/);
     assert.equal(logs.includes("secret"), false);
+  } finally {
+    rmSync(rootDir, { recursive: true, force: true });
+  }
+});
+
+test("formatRecentErrorLogs redacts valid persisted entries at response time", () => {
+  const rootDir = mkdtempSync(join(tmpdir(), "home-watch-tg-errors-"));
+  const statePath = join(rootDir, "runtime_state.json");
+  try {
+    writeFileSync(statePath, JSON.stringify({
+      telegramUpdateOffset: null,
+      dailyPhotoSchedule: null,
+      errorLog: [{
+        ts: "2026-05-26T00:00:00.000Z",
+        source: "telegram_reply",
+        message: "token=secret failed for /private/tmp/home-watch/photo.jpg",
+      }],
+    }));
+
+    const logs = formatRecentErrorLogs(statePath);
+    assert.match(logs, /token=\[redacted\]/);
+    assert.match(logs, /\[redacted-media-path\]/);
+    assert.equal(logs.includes("secret"), false);
+    assert.equal(logs.includes("/private/tmp/home-watch/photo.jpg"), false);
   } finally {
     rmSync(rootDir, { recursive: true, force: true });
   }

@@ -124,6 +124,48 @@ test("pollOnce dispatches camera test and sends stderr diagnostics", async () =>
   }
 });
 
+test("pollOnce records failed text replies as Bot-owned runtime errors", async () => {
+  const rootDir = mkdtempSync(join(tmpdir(), "home-watch-tg-poll-"));
+  const statePath = join(rootDir, "runtime_state.json");
+  try {
+    saveRuntimeState(statePath, { telegramUpdateOffset: 8 });
+    const app = createApp({ allowedChatIds: ["123"] });
+
+    await pollOnce({
+      app,
+      statePath,
+      telegramBotToken: "token",
+      onReplyError(error) {
+        appendRuntimeError(statePath, {
+          source: "telegram_reply",
+          error,
+          now: () => new Date("2026-05-26T00:00:00.000Z"),
+        });
+      },
+      fetchImpl(url) {
+        if (url.toString().includes("/getUpdates")) {
+          return Promise.resolve({
+            ok: true,
+            json: () => Promise.resolve({
+              ok: true,
+              result: [{ update_id: 8, message: { chat: { id: 123 }, text: "/help" } }],
+            }),
+          });
+        }
+        return Promise.resolve({ ok: false, json: () => Promise.resolve({ ok: false }) });
+      },
+    });
+
+    assert.deepEqual(JSON.parse(readFileSync(statePath, "utf8")).errorLog, [{
+      ts: "2026-05-26T00:00:00.000Z",
+      source: "telegram_reply",
+      message: "Error: Telegram sendMessage failed.",
+    }]);
+  } finally {
+    rmSync(rootDir, { recursive: true, force: true });
+  }
+});
+
 test("pollOnce reports video send failure with bounded text and deletes temp file", async () => {
   const rootDir = mkdtempSync(join(tmpdir(), "home-watch-tg-poll-"));
   const statePath = join(rootDir, "runtime_state.json");

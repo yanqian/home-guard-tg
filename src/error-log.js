@@ -33,7 +33,10 @@ export function formatRecentErrorLogs(statePath, { limit = 8 } = {}) {
     return EMPTY_LOG_RESPONSE;
   }
 
-  const lines = entries.map((entry) => `${entry.ts} [${entry.source}] ${entry.message}`);
+  const lines = entries.map((entry) => {
+    const ts = Number.isNaN(Date.parse(entry.ts)) ? new Date(0).toISOString() : new Date(entry.ts).toISOString();
+    return `${ts} [${sanitizeSource(entry.source)}] ${sanitizeErrorMessage(entry.message)}`;
+  });
   return boundTelegramText(["Recent Bot-owned runtime errors:", ...lines].join("\n"));
 }
 

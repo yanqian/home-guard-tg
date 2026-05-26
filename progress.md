@@ -44,11 +44,11 @@ Implemented behavior:
 
 ## Last Completed Feature
 
-`F006` - Enhanced `/status` host and Bot state reporting.
+`F008` - Added `/camera_test` for bounded ffmpeg camera diagnostics.
 
 ## Next Feature
 
-`F008` - Implemented `/camera_test` for bounded ffmpeg camera diagnostics; awaiting evaluator verification.
+`F007` - Reworked `/logs` runtime-error redaction and text reply failure recording; awaiting evaluator verification.
 
 ## Known Issues
 

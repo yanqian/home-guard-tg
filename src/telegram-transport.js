@@ -18,7 +18,7 @@ export async function sendTelegramMessage({ botToken, chatId, text, fetchImpl = 
   if (typeof fetchImpl !== "function") {
     throw new Error("fetch implementation is required.");
   }
-  return fetchImpl(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+  const response = await fetchImpl(`https://api.telegram.org/bot${botToken}/sendMessage`, {
     method: "POST",
     headers: {
       "content-type": "application/json",
@@ -28,6 +28,21 @@ export async function sendTelegramMessage({ botToken, chatId, text, fetchImpl = 
       text,
     }),
   });
+  if (!response?.ok) {
+    throw new Error("Telegram sendMessage failed.");
+  }
+  if (typeof response.json === "function") {
+    let json;
+    try {
+      json = await response.json();
+    } catch {
+      throw new Error("Telegram sendMessage failed.");
+    }
+    if (json?.ok !== true) {
+      throw new Error("Telegram sendMessage failed.");
+    }
+  }
+  return response;
 }
 
 export async function sendTelegramReply({
