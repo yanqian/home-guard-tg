@@ -10,11 +10,25 @@ test("app rejects unauthorized and handles help/status", async () => {
   const app = createApp({
     allowedChatIds: ["123"],
     cameraClipConfig: { enabled: false },
+    statusOptions: {
+      startedAtMs: Date.parse("2026-05-26T00:00:00.000Z"),
+      now: () => new Date("2026-05-26T00:00:05.000Z"),
+      collectHostTelemetry: async () => ({
+        batteryLevel: "unavailable",
+        powerSource: "unavailable",
+        localIps: [],
+        diskAvailable: "unavailable",
+      }),
+    },
   });
   assert.equal(await app.handleMessage({ chatId: "999", text: "/help" }), "Unauthorized chat.");
   assert.match(await app.handleMessage({ chatId: "123", text: "/help" }), /Available commands/);
-  assert.match(await app.handleMessage({ chatId: "123", text: "/status" }), /Camera command: disabled/);
-  assert.match(await app.handleMessage({ chatId: "123", text: "/status" }), /Photo command: disabled/);
+  const status = await app.handleMessage({ chatId: "123", text: "/status" });
+  assert.match(status, /Camera command: disabled/);
+  assert.match(status, /Photo command: disabled/);
+  assert.match(status, /Bot uptime: 5s/);
+  assert.match(status, /Response timestamp: 2026-05-26T00:00:05.000Z/);
+  assert.match(status, /Local IPs: unavailable/);
 });
 
 test("app handles /camera_clip without unrelated agent behavior", async () => {

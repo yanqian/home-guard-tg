@@ -27,18 +27,22 @@ Implemented behavior:
 - Schedule creation reports the configured local time and server timezone context.
 - `/cancel_schedule` clears the persisted active daily photo schedule for authorized chats.
 - `/cancel_schedule` is idempotent when no schedule exists and does not interrupt an already-started media capture.
+- `/status` reports Bot uptime, response timestamp, camera/photo enabled and valid state, active media capture state, alarm availability, Mac power telemetry when available, private local IPs, and remaining disk space.
+- Status host telemetry uses bounded local collection, avoids public-IP lookup, and degrades to `unavailable` values when telemetry is unsupported or fails.
 - Default tests use fake capture and fake Telegram transport without real camera or network requirements.
 
 ## Last Completed Feature
 
-`F003` - `/schedule_photo HH:MM` daily still image scheduling.
+`F006` - Enhanced `/status` host and Bot state reporting.
 
 ## Next Feature
 
-`F004` - Await evaluator verification for `/cancel_schedule` daily photo schedule cancellation.
+`F005` - Await implementation of cautious-use `/sound_alarm <seconds>`.
 
 ## Known Issues
 
 - Real camera use depends on host camera permissions and a valid capture command such as `ffmpeg` with a correct AVFoundation device index.
 - Real photo capture depends on host camera permissions and a valid still-image command such as `ffmpeg` with a correct AVFoundation device index.
+- Status power telemetry depends on the macOS `pmset -g batt` command being available and responsive.
+- Status disk telemetry depends on the local `df -k` command being available and responsive.
 - Newly planned commands have no currently open implementation questions in `SPEC.md` section 3.8.

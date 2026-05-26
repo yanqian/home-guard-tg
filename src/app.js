@@ -4,6 +4,7 @@ import { HELP_RESPONSE } from "./constants.js";
 import { getCameraClipStatus, handleCameraClip } from "./camera-clip.js";
 import { getPhotoStatus, handlePhoto } from "./photo.js";
 import { handleCancelSchedule, handleSchedulePhoto } from "./schedule-photo.js";
+import { formatStatus } from "./status.js";
 
 export function createApp({
   allowedChatIds,
@@ -12,7 +13,9 @@ export function createApp({
   photoConfig,
   photoOptions = {},
   schedulePhotoOptions = {},
+  statusOptions = {},
 } = {}) {
+  const startedAtMs = statusOptions.startedAtMs ?? Date.now();
   return {
     async handleMessage(message) {
       const auth = authorizeMessage(message, allowedChatIds);
@@ -29,7 +32,14 @@ export function createApp({
         return HELP_RESPONSE;
       }
       if (parsed.command === "/status") {
-        return formatStatus(getCameraClipStatus(cameraClipConfig), getPhotoStatus(photoConfig));
+        return formatStatus({
+          cameraStatus: getCameraClipStatus(cameraClipConfig),
+          photoStatus: getPhotoStatus(photoConfig),
+          alarmStatus: statusOptions.alarmStatus,
+          startedAtMs,
+          now: statusOptions.now,
+          collectHostTelemetry: statusOptions.collectHostTelemetry,
+        });
       }
       if (parsed.command === "/camera_clip") {
         return handleCameraClip(parsed.args, cameraClipConfig, cameraClipOptions);
@@ -57,15 +67,4 @@ export function createApp({
       return HELP_RESPONSE;
     },
   };
-}
-
-function formatStatus(cameraStatus, photoStatus) {
-  return [
-    "Home watch Bot is running.",
-    `Camera command: ${cameraStatus.enabled ? "enabled" : "disabled"}`,
-    `Camera config: ${cameraStatus.configValid ? "valid" : "invalid"}`,
-    `Photo command: ${photoStatus.enabled ? "enabled" : "disabled"}`,
-    `Photo config: ${photoStatus.configValid ? "valid" : "invalid"}`,
-    `Media capture: ${cameraStatus.activeCapture || photoStatus.activeCapture ? "active" : "idle"}`,
-  ].join("\n");
 }

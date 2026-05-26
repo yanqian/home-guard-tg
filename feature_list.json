@@ -48,9 +48,9 @@
     {
       "id": "F006",
       "description": "Enhance /status for authorized chats to report bounded host and Bot state including Bot uptime, camera clip config enabled/valid state, photo config enabled/valid state, active capture or alarm state, Mac battery level when available, Mac power source or charging state when available, private local network IP information without secrets and without public-IP lookup by default, remaining disk space, and current response timestamp for online and latency confirmation; host telemetry must degrade gracefully with bounded unavailable values and must not block polling indefinitely.",
-      "passes": false,
-      "status": "todo",
-      "attempts": 0,
+      "passes": true,
+      "status": "done",
+      "attempts": 1,
       "last_error": "",
       "priority": "P1"
     },
