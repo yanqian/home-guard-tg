@@ -42,6 +42,7 @@ export function sanitizeErrorMessage(error) {
     ? `${error.name}: ${error.message}`
     : String(error ?? "Unknown error");
   const redacted = redactSecrets(raw)
+    .replace(/\S+\.(mp4|mov|m4v|jpg|jpeg|png|heic|webp)\b/gi, "[redacted-media-path]")
     .replace(/[\r\n\t]+/g, " ")
     .replace(/\s+/g, " ")
     .trim();

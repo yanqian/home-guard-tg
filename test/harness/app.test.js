@@ -5,6 +5,7 @@ import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "no
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { createApp } from "../../src/app.js";
+import { appendRuntimeError } from "../../src/error-log.js";
 
 test("app rejects unauthorized and handles help/status", async () => {
   const rootDir = mkdtempSync(join(tmpdir(), "home-watch-tg-app-"));
@@ -34,6 +35,16 @@ test("app rejects unauthorized and handles help/status", async () => {
   assert.match(status, /Response timestamp: 2026-05-26T00:00:05.000Z/);
   assert.match(status, /Local IPs: unavailable/);
   assert.equal(await app.handleMessage({ chatId: "123", text: "/logs" }), "No recent Bot-owned runtime errors.");
+  appendRuntimeError(statePath, {
+    source: "polling",
+    error: "token=secret failed while sending /private/tmp/home-watch/photo.jpg",
+    now: () => new Date("2026-05-26T00:00:06.000Z"),
+  });
+  const logs = await app.handleMessage({ chatId: "123", text: "/logs" });
+  assert.match(logs, /Recent Bot-owned runtime errors:/);
+  assert.match(logs, /2026-05-26T00:00:06.000Z \[polling\]/);
+  assert.match(logs, /token=\[redacted\]/);
+  assert.match(logs, /\[redacted-media-path\]/);
   rmSync(rootDir, { recursive: true, force: true });
 });
 

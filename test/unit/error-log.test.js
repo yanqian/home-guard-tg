@@ -60,4 +60,8 @@ test("redactSecrets and sanitizeErrorMessage avoid multiline or token leakage", 
     sanitizeErrorMessage("authorization=BearerSecret\nnext line"),
     "authorization=[redacted] next line",
   );
+  assert.equal(
+    sanitizeErrorMessage("failed to upload /private/tmp/home-watch/camera-secret.mp4"),
+    "failed to upload [redacted-media-path]",
+  );
 });

@@ -30,7 +30,13 @@ export async function sendTelegramMessage({ botToken, chatId, text, fetchImpl = 
   });
 }
 
-export async function sendTelegramReply({ botToken, chatId, reply, fetchImpl = globalThis.fetch }) {
+export async function sendTelegramReply({
+  botToken,
+  chatId,
+  reply,
+  fetchImpl = globalThis.fetch,
+  onError,
+}) {
   if (reply?.telegramPhoto) {
     try {
       await sendTelegramPhoto({
@@ -41,7 +47,8 @@ export async function sendTelegramReply({ botToken, chatId, reply, fetchImpl = g
         caption: reply.telegramPhoto.caption ?? reply.text,
         fetchImpl,
       });
-    } catch {
+    } catch (error) {
+      onError?.(error);
       await sendTelegramMessage({
         botToken,
         chatId,
@@ -63,7 +70,8 @@ export async function sendTelegramReply({ botToken, chatId, reply, fetchImpl = g
         caption: reply.telegramVideo.caption ?? reply.text,
         fetchImpl,
       });
-    } catch {
+    } catch (error) {
+      onError?.(error);
       await sendTelegramMessage({
         botToken,
         chatId,

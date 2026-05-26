@@ -193,7 +193,7 @@ function persistTelegramUpdateOffset(statePath, nextOffset) {
 
 async function attemptTelegramReply({ botToken, chatId, reply, fetchImpl, onReplyError }) {
   try {
-    await sendTelegramReply({ botToken, chatId, reply, fetchImpl });
+    await sendTelegramReply({ botToken, chatId, reply, fetchImpl, onError: onReplyError });
   } catch (error) {
     onReplyError?.(error);
     // Avoid retry loops from transient Telegram send failures.

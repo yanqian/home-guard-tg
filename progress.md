@@ -34,8 +34,8 @@ Implemented behavior:
 - Help and status output label `/sound_alarm` as cautious use.
 - `/status` reports Bot uptime, response timestamp, camera/photo enabled and valid state, active media capture state, alarm availability, Mac power telemetry when available, private local IPs, and remaining disk space.
 - Status host telemetry uses bounded local collection, avoids public-IP lookup, and degrades to `unavailable` values when telemetry is unsupported or fails.
-- `/logs` returns recent Bot-owned runtime errors for authorized chats, using bounded persisted local state with one-line secret-redacted messages.
-- Runtime error logging records polling, Telegram reply, and scheduled-photo runtime failures without returning general host logs or media content.
+- `/logs` returns recent Bot-owned runtime errors for authorized chats, using bounded persisted local state with one-line secret- and media-path-redacted messages.
+- Runtime error logging records polling, Telegram media reply, text reply, and scheduled-photo runtime failures without returning general host logs or media content.
 - Default tests use fake capture and fake Telegram transport without real camera or network requirements.
 - Default tests use fake alarm subprocesses and never play real audio.
 

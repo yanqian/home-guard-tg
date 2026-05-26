@@ -5,6 +5,7 @@ import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "no
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { createApp } from "../../src/app.js";
+import { appendRuntimeError } from "../../src/error-log.js";
 import { pollOnce } from "../../src/polling.js";
 import { saveRuntimeState } from "../../src/runtime-state.js";
 
@@ -98,6 +99,13 @@ test("pollOnce reports video send failure with bounded text and deletes temp fil
       app,
       statePath,
       telegramBotToken: "token",
+      onReplyError(error) {
+        appendRuntimeError(statePath, {
+          source: "telegram_reply",
+          error,
+          now: () => new Date("2026-05-26T00:00:00.000Z"),
+        });
+      },
       fetchImpl(url, options) {
         calls.push({ url: url.toString(), options });
         if (url.toString().includes("/getUpdates")) {
@@ -122,6 +130,11 @@ test("pollOnce reports video send failure with bounded text and deletes temp fil
       chat_id: "123",
       text: "Camera clip send failed.",
     });
+    assert.deepEqual(JSON.parse(readFileSync(statePath, "utf8")).errorLog, [{
+      ts: "2026-05-26T00:00:00.000Z",
+      source: "telegram_reply",
+      message: "Error: Telegram sendVideo failed.",
+    }]);
     assert.equal(existsSync(outputs[0]), false);
   } finally {
     rmSync(rootDir, { recursive: true, force: true });
