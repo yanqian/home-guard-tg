@@ -21,9 +21,9 @@
     {
       "id": "F003",
       "description": "Add /schedule_photo HH:MM for authorized chats to schedule one daily still photo capture at a 24-hour server-local time using the Mac's local timezone rather than Telegram or user-local timezone; persist the schedule in runtime state across Bot restarts, allow only one active daily schedule unless later requirements change this, reject a new schedule when one already exists and tell the user to run /cancel_schedule first, require valid enabled photo capture configuration, reuse /photo timeout cleanup and send behavior, prevent overlap with active captures, report configured local time and timezone context, and avoid hidden continuous monitoring beyond the explicit daily trigger.",
-      "passes": false,
-      "status": "todo",
-      "attempts": 0,
+      "passes": true,
+      "status": "done",
+      "attempts": 1,
       "last_error": "",
       "priority": "P1"
     },

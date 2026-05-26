@@ -5,19 +5,20 @@ import { commandList } from "../../src/commands.js";
 import { HELP_RESPONSE } from "../../src/constants.js";
 
 test("command surface contains only home-watch commands", () => {
-  assert.deepEqual(commandList(), ["/camera_clip", "/photo", "/status", "/help"]);
+  assert.deepEqual(commandList(), ["/camera_clip", "/photo", "/schedule_photo", "/status", "/help"]);
   assert.equal(commandList().includes("/agent"), false);
   assert.equal(commandList().includes("/work"), false);
 });
 
 test("help output matches documented command surface", () => {
   assert.equal(HELP_RESPONSE, [
-    "Available commands:",
-    "/camera_clip <seconds> - capture and send a short local camera clip",
-    "/photo - capture and send one still image",
-    "/status - show Bot status",
-    "/help - show this command list",
-  ].join("\n"));
+  "Available commands:",
+  "/camera_clip <seconds> - capture and send a short local camera clip",
+  "/photo - capture and send one still image",
+  "/schedule_photo HH:MM - schedule one daily still image at server-local time",
+  "/status - show Bot status",
+  "/help - show this command list",
+].join("\n"));
 });
 
 test("feature_list contains unique completed initial feature", () => {

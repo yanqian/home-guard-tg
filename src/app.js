@@ -3,6 +3,7 @@ import { parseCommand } from "./commands.js";
 import { HELP_RESPONSE } from "./constants.js";
 import { getCameraClipStatus, handleCameraClip } from "./camera-clip.js";
 import { getPhotoStatus, handlePhoto } from "./photo.js";
+import { handleSchedulePhoto } from "./schedule-photo.js";
 
 export function createApp({
   allowedChatIds,
@@ -10,6 +11,7 @@ export function createApp({
   cameraClipOptions = {},
   photoConfig,
   photoOptions = {},
+  schedulePhotoOptions = {},
 } = {}) {
   return {
     async handleMessage(message) {
@@ -34,6 +36,16 @@ export function createApp({
       }
       if (parsed.command === "/photo") {
         return handlePhoto(photoConfig, photoOptions);
+      }
+      if (parsed.command === "/schedule_photo") {
+        return handleSchedulePhoto({
+          args: parsed.args,
+          chatId: message.chatId,
+          photoConfig,
+          statePath: schedulePhotoOptions.statePath,
+          onScheduleChanged: schedulePhotoOptions.onScheduleChanged,
+          now: schedulePhotoOptions.now,
+        });
       }
 
       return HELP_RESPONSE;

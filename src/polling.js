@@ -3,6 +3,7 @@ import { createApp } from "./app.js";
 import { createStartupContext } from "./config.js";
 import { loadRuntimeState, saveRuntimeState } from "./runtime-state.js";
 import { parseTelegramMessage, sendTelegramReply } from "./telegram-transport.js";
+import { createDailyPhotoScheduler } from "./schedule-photo.js";
 
 const DEFAULT_POLL_TIMEOUT_SECONDS = 25;
 const DEFAULT_POLL_INTERVAL_MS = 1000;
@@ -10,6 +11,7 @@ const DEFAULT_POLL_INTERVAL_MS = 1000;
 export function start(env = process.env, options = {}) {
   const context = createStartupContext(env, options);
   loadRuntimeState(context.statePath);
+  let scheduleController = null;
   const app = options.app ?? createApp({
     allowedChatIds: context.allowedChatIds,
     cameraClipConfig: context.cameraClipConfig,
@@ -22,7 +24,29 @@ export function start(env = process.env, options = {}) {
       spawnImpl: options.photoSpawn,
       timeoutMs: options.photoTimeoutMs,
     },
+    schedulePhotoOptions: {
+      statePath: context.statePath,
+      onScheduleChanged() {
+        scheduleController?.refresh();
+      },
+    },
   });
+
+  scheduleController = createDailyPhotoScheduler({
+    statePath: context.statePath,
+    photoConfig: context.photoConfig,
+    photoOptions: {
+      spawnImpl: options.photoSpawn,
+      timeoutMs: options.photoTimeoutMs,
+    },
+    telegramBotToken: context.telegramBotToken,
+    fetchImpl: options.fetchImpl,
+    setTimeoutImpl: options.scheduleSetTimeout,
+    clearTimeoutImpl: options.scheduleClearTimeout,
+    now: options.scheduleNow,
+    onError: options.scheduleOnError,
+  });
+  scheduleController.refresh();
 
   const controller = startPolling({
     app,
@@ -39,7 +63,13 @@ export function start(env = process.env, options = {}) {
     statePath: context.statePath,
     cameraClipConfig: context.cameraClipConfig,
     photoConfig: context.photoConfig,
-    controller,
+    controller: {
+      stop() {
+        scheduleController.stop();
+        controller.stop();
+      },
+      done: controller.done,
+    },
   };
 }
 

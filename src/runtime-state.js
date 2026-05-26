@@ -10,7 +10,23 @@ export function normalizeRuntimeState(value) {
   const offset = value.telegramUpdateOffset;
   return {
     telegramUpdateOffset: Number.isSafeInteger(offset) && offset >= 0 ? offset : null,
+    dailyPhotoSchedule: isValidDailyPhotoSchedule(value.dailyPhotoSchedule)
+      ? { ...value.dailyPhotoSchedule }
+      : null,
   };
+}
+
+function isValidDailyPhotoSchedule(value) {
+  return Boolean(
+    value
+      && typeof value === "object"
+      && !Array.isArray(value)
+      && value.type === "daily_photo"
+      && typeof value.time === "string"
+      && /^([01]\d|2[0-3]):([0-5]\d)$/.test(value.time)
+      && typeof value.chatId === "string"
+      && value.chatId.length > 0,
+  );
 }
 
 export function loadRuntimeState(statePath) {
