@@ -8,7 +8,7 @@ Implemented behavior:
 
 - Startup configuration validates `TELEGRAM_BOT_TOKEN` and `ALLOWED_CHAT_IDS` outside `NODE_ENV=test`.
 - Runtime state persists Telegram update offset in `runtime_state.json`.
-- Command parsing supports `/camera_clip <seconds>`, `/photo`, `/schedule_photo HH:MM`, `/cancel_schedule`, `/sound_alarm <seconds>`, `/status`, and `/help`.
+- Command parsing supports `/camera_clip <seconds>`, `/photo`, `/schedule_photo HH:MM`, `/cancel_schedule`, `/sound_alarm <seconds>`, `/logs`, `/status`, and `/help`.
 - Unauthorized chats and unknown commands receive bounded responses.
 - `/camera_clip <seconds>` is disabled unless `ENABLE_CAMERA_CLIP_COMMAND=1`.
 - `CAMERA_CLIP_COMMAND_JSON` must be a JSON argv array template containing `{seconds}` and `{output}`.
@@ -34,6 +34,8 @@ Implemented behavior:
 - Help and status output label `/sound_alarm` as cautious use.
 - `/status` reports Bot uptime, response timestamp, camera/photo enabled and valid state, active media capture state, alarm availability, Mac power telemetry when available, private local IPs, and remaining disk space.
 - Status host telemetry uses bounded local collection, avoids public-IP lookup, and degrades to `unavailable` values when telemetry is unsupported or fails.
+- `/logs` returns recent Bot-owned runtime errors for authorized chats, using bounded persisted local state with one-line secret-redacted messages.
+- Runtime error logging records polling, Telegram reply, and scheduled-photo runtime failures without returning general host logs or media content.
 - Default tests use fake capture and fake Telegram transport without real camera or network requirements.
 - Default tests use fake alarm subprocesses and never play real audio.
 
@@ -43,7 +45,7 @@ Implemented behavior:
 
 ## Next Feature
 
-`F005` - Implemented cautious-use `/sound_alarm <seconds>`; awaiting evaluator verification.
+`F007` - Implemented `/logs` for recent Bot-owned runtime errors; awaiting evaluator verification.
 
 ## Known Issues
 

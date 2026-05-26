@@ -54,6 +54,7 @@ test("handleCancelSchedule clears persisted schedule idempotently", async () => 
     assert.deepEqual(JSON.parse(readFileSync(statePath, "utf8")), {
       telegramUpdateOffset: 42,
       dailyPhotoSchedule: null,
+      errorLog: [],
     });
 
     assert.deepEqual(await handleCancelSchedule({

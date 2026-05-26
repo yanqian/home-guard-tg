@@ -4,6 +4,7 @@ export const COMMANDS = Object.freeze([
   "/schedule_photo",
   "/cancel_schedule",
   "/sound_alarm",
+  "/logs",
   "/status",
   "/help",
 ]);
@@ -24,6 +25,7 @@ export const HELP_RESPONSE = [
   "/schedule_photo HH:MM - schedule one daily still image at server-local time",
   "/cancel_schedule - cancel the active daily photo schedule",
   "/sound_alarm <seconds> - play a local audible alert; cautious use only",
+  "/logs - show recent Bot-owned runtime errors",
   "/status - show Bot status",
   "/help - show this command list",
 ].join("\n");
@@ -31,4 +33,9 @@ export const HELP_RESPONSE = [
 export const DEFAULT_STATE = Object.freeze({
   telegramUpdateOffset: null,
   dailyPhotoSchedule: null,
+  errorLog: [],
 });
+
+export const MAX_ERROR_LOG_ENTRIES = 20;
+export const MAX_ERROR_LOG_MESSAGE_LENGTH = 300;
+export const MAX_LOGS_RESPONSE_LENGTH = 3500;

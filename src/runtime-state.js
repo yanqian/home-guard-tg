@@ -1,7 +1,7 @@
 import { existsSync, readFileSync, renameSync, writeFileSync } from "node:fs";
 import { dirname } from "node:path";
 import { mkdirSync } from "node:fs";
-import { DEFAULT_STATE } from "./constants.js";
+import { DEFAULT_STATE, MAX_ERROR_LOG_ENTRIES, MAX_ERROR_LOG_MESSAGE_LENGTH } from "./constants.js";
 
 export function normalizeRuntimeState(value) {
   if (!value || typeof value !== "object" || Array.isArray(value)) {
@@ -13,6 +13,7 @@ export function normalizeRuntimeState(value) {
     dailyPhotoSchedule: isValidDailyPhotoSchedule(value.dailyPhotoSchedule)
       ? { ...value.dailyPhotoSchedule }
       : null,
+    errorLog: normalizeErrorLog(value.errorLog),
   };
 }
 
@@ -26,6 +27,34 @@ function isValidDailyPhotoSchedule(value) {
       && /^([01]\d|2[0-3]):([0-5]\d)$/.test(value.time)
       && typeof value.chatId === "string"
       && value.chatId.length > 0,
+  );
+}
+
+function normalizeErrorLog(value) {
+  if (!Array.isArray(value)) {
+    return [];
+  }
+  return value
+    .filter(isValidErrorLogEntry)
+    .slice(-MAX_ERROR_LOG_ENTRIES)
+    .map((entry) => ({
+      ts: entry.ts,
+      source: entry.source,
+      message: entry.message.slice(0, MAX_ERROR_LOG_MESSAGE_LENGTH),
+    }));
+}
+
+function isValidErrorLogEntry(value) {
+  return Boolean(
+    value
+      && typeof value === "object"
+      && !Array.isArray(value)
+      && typeof value.ts === "string"
+      && !Number.isNaN(Date.parse(value.ts))
+      && typeof value.source === "string"
+      && /^[a-z0-9_.:-]{1,40}$/i.test(value.source)
+      && typeof value.message === "string"
+      && value.message.trim().length > 0,
   );
 }
 

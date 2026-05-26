@@ -4,6 +4,7 @@ import { createStartupContext } from "./config.js";
 import { loadRuntimeState, saveRuntimeState } from "./runtime-state.js";
 import { parseTelegramMessage, sendTelegramReply } from "./telegram-transport.js";
 import { createDailyPhotoScheduler } from "./schedule-photo.js";
+import { appendRuntimeError } from "./error-log.js";
 
 const DEFAULT_POLL_TIMEOUT_SECONDS = 25;
 const DEFAULT_POLL_INTERVAL_MS = 1000;
@@ -11,6 +12,7 @@ const DEFAULT_POLL_INTERVAL_MS = 1000;
 export function start(env = process.env, options = {}) {
   const context = createStartupContext(env, options);
   loadRuntimeState(context.statePath);
+  const recordRuntimeError = createRuntimeErrorRecorder(context.statePath);
   let scheduleController = null;
   const app = options.app ?? createApp({
     allowedChatIds: context.allowedChatIds,
@@ -35,6 +37,9 @@ export function start(env = process.env, options = {}) {
         scheduleController?.refresh();
       },
     },
+    logsOptions: {
+      statePath: context.statePath,
+    },
   });
 
   scheduleController = createDailyPhotoScheduler({
@@ -49,7 +54,10 @@ export function start(env = process.env, options = {}) {
     setTimeoutImpl: options.scheduleSetTimeout,
     clearTimeoutImpl: options.scheduleClearTimeout,
     now: options.scheduleNow,
-    onError: options.scheduleOnError,
+    onError(error) {
+      recordRuntimeError("schedule_photo", error);
+      options.scheduleOnError?.(error);
+    },
   });
   scheduleController.refresh();
 
@@ -60,6 +68,8 @@ export function start(env = process.env, options = {}) {
     fetchImpl: options.fetchImpl,
     pollTimeoutSeconds: options.pollTimeoutSeconds,
     pollIntervalMs: options.pollIntervalMs,
+    onError: (error) => recordRuntimeError("polling", error),
+    onReplyError: (error) => recordRuntimeError("telegram_reply", error),
   });
 
   return {
@@ -86,6 +96,7 @@ export function startPolling(options) {
       try {
         await pollOnce(options);
       } catch (error) {
+        options.onError?.(error);
         console.error(error instanceof Error ? error.message : String(error));
       }
       if (!stopped) {
@@ -108,6 +119,7 @@ export async function pollOnce({
   telegramBotToken,
   fetchImpl = globalThis.fetch,
   pollTimeoutSeconds = DEFAULT_POLL_TIMEOUT_SECONDS,
+  onReplyError,
 }) {
   if (!app || typeof app.handleMessage !== "function") {
     throw new Error("app.handleMessage is required.");
@@ -134,6 +146,7 @@ export async function pollOnce({
         chatId: message.chatId,
         reply,
         fetchImpl,
+        onReplyError,
       });
     }
 
@@ -178,12 +191,23 @@ function persistTelegramUpdateOffset(statePath, nextOffset) {
   saveRuntimeState(statePath, { ...state, telegramUpdateOffset });
 }
 
-async function attemptTelegramReply({ botToken, chatId, reply, fetchImpl }) {
+async function attemptTelegramReply({ botToken, chatId, reply, fetchImpl, onReplyError }) {
   try {
     await sendTelegramReply({ botToken, chatId, reply, fetchImpl });
-  } catch {
+  } catch (error) {
+    onReplyError?.(error);
     // Avoid retry loops from transient Telegram send failures.
   }
+}
+
+function createRuntimeErrorRecorder(statePath) {
+  return (source, error) => {
+    try {
+      appendRuntimeError(statePath, { source, error });
+    } catch (logError) {
+      console.error(logError instanceof Error ? logError.message : String(logError));
+    }
+  };
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {

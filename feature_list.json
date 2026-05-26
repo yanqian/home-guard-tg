@@ -59,8 +59,8 @@
       "description": "Add /logs for authorized chats to return only recent Bot-owned runtime errors; maintain a bounded persisted local error log on the server, redact secrets, exclude video/photo content and sensitive media data, avoid returning general host logs, bound Telegram output length, and report a clear empty state when no recent errors are available.",
       "passes": false,
       "status": "todo",
-      "attempts": 0,
-      "last_error": "",
+      "attempts": 1,
+      "last_error": "`/logs` does not redact sensitive camera/media paths from persisted runtime error messages, so formatted log output can expose paths like `/Users/.../home-watch-tg-camera-abc/clip.mp4`, violating the acceptance criteria.",
       "priority": "P2"
     },
     {

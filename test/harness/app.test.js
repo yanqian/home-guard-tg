@@ -7,9 +7,12 @@ import { join } from "node:path";
 import { createApp } from "../../src/app.js";
 
 test("app rejects unauthorized and handles help/status", async () => {
+  const rootDir = mkdtempSync(join(tmpdir(), "home-watch-tg-app-"));
+  const statePath = join(rootDir, "runtime_state.json");
   const app = createApp({
     allowedChatIds: ["123"],
     cameraClipConfig: { enabled: false },
+    logsOptions: { statePath },
     statusOptions: {
       startedAtMs: Date.parse("2026-05-26T00:00:00.000Z"),
       now: () => new Date("2026-05-26T00:00:05.000Z"),
@@ -30,6 +33,8 @@ test("app rejects unauthorized and handles help/status", async () => {
   assert.match(status, /Bot uptime: 5s/);
   assert.match(status, /Response timestamp: 2026-05-26T00:00:05.000Z/);
   assert.match(status, /Local IPs: unavailable/);
+  assert.equal(await app.handleMessage({ chatId: "123", text: "/logs" }), "No recent Bot-owned runtime errors.");
+  rmSync(rootDir, { recursive: true, force: true });
 });
 
 test("app handles /sound_alarm with fake alarm command", async () => {
@@ -194,10 +199,9 @@ test("app handles /cancel_schedule by clearing only active daily photo schedule 
       "Daily photo schedule cancelled.",
     );
     assert.equal(refreshCount, 1);
-    assert.deepEqual(JSON.parse(readFileSync(statePath, "utf8")), {
-      telegramUpdateOffset: 7,
-      dailyPhotoSchedule: null,
-    });
+    const state = JSON.parse(readFileSync(statePath, "utf8"));
+    assert.equal(state.telegramUpdateOffset, 7);
+    assert.equal(state.dailyPhotoSchedule, null);
 
     assert.equal(
       (await app.handleMessage({ chatId: "123", text: "/cancel_schedule" })).response,

@@ -6,6 +6,7 @@ import { getPhotoStatus, handlePhoto } from "./photo.js";
 import { handleCancelSchedule, handleSchedulePhoto } from "./schedule-photo.js";
 import { getSoundAlarmStatus, handleSoundAlarm } from "./sound-alarm.js";
 import { formatStatus } from "./status.js";
+import { formatRecentErrorLogs } from "./error-log.js";
 
 export function createApp({
   allowedChatIds,
@@ -17,6 +18,7 @@ export function createApp({
   soundAlarmOptions = {},
   schedulePhotoOptions = {},
   statusOptions = {},
+  logsOptions = {},
 } = {}) {
   const startedAtMs = statusOptions.startedAtMs ?? Date.now();
   return {
@@ -43,6 +45,9 @@ export function createApp({
           now: statusOptions.now,
           collectHostTelemetry: statusOptions.collectHostTelemetry,
         });
+      }
+      if (parsed.command === "/logs") {
+        return formatRecentErrorLogs(logsOptions.statePath);
       }
       if (parsed.command === "/camera_clip") {
         return handleCameraClip(parsed.args, cameraClipConfig, cameraClipOptions);

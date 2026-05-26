@@ -4,7 +4,7 @@ import { commandList, parseCommand } from "../../src/commands.js";
 import { HELP_RESPONSE } from "../../src/constants.js";
 
 test("commandList exposes only home-watch commands", () => {
-  assert.deepEqual(commandList(), ["/camera_clip", "/photo", "/schedule_photo", "/cancel_schedule", "/sound_alarm", "/status", "/help"]);
+  assert.deepEqual(commandList(), ["/camera_clip", "/photo", "/schedule_photo", "/cancel_schedule", "/sound_alarm", "/logs", "/status", "/help"]);
 });
 
 test("parseCommand parses known commands and required args", () => {
@@ -14,6 +14,7 @@ test("parseCommand parses known commands and required args", () => {
   assert.deepEqual(parseCommand("/schedule_photo 09:00"), { ok: true, command: "/schedule_photo", args: "09:00" });
   assert.deepEqual(parseCommand("/cancel_schedule"), { ok: true, command: "/cancel_schedule", args: "" });
   assert.deepEqual(parseCommand("/sound_alarm 5"), { ok: true, command: "/sound_alarm", args: "5" });
+  assert.deepEqual(parseCommand("/logs"), { ok: true, command: "/logs", args: "" });
   assert.deepEqual(parseCommand("/camera_clip"), {
     ok: false,
     response: "Usage: /camera_clip <seconds>",
@@ -41,6 +42,7 @@ test("help response documents exact command surface", () => {
   "/schedule_photo HH:MM - schedule one daily still image at server-local time",
   "/cancel_schedule - cancel the active daily photo schedule",
   "/sound_alarm <seconds> - play a local audible alert; cautious use only",
+  "/logs - show recent Bot-owned runtime errors",
   "/status - show Bot status",
   "/help - show this command list",
 ].join("\n"));
