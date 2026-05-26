@@ -12,7 +12,7 @@ import {
 import { loadRuntimeState } from "../../src/runtime-state.js";
 
 test("appendRuntimeError persists bounded redacted Bot-owned runtime errors", () => {
-  const rootDir = mkdtempSync(join(tmpdir(), "home-watch-tg-errors-"));
+  const rootDir = mkdtempSync(join(tmpdir(), "home-guard-tg-errors-"));
   const statePath = join(rootDir, "runtime_state.json");
   try {
     appendRuntimeError(statePath, {
@@ -32,7 +32,7 @@ test("appendRuntimeError persists bounded redacted Bot-owned runtime errors", ()
 });
 
 test("formatRecentErrorLogs returns clear empty state and bounded recent entries", () => {
-  const rootDir = mkdtempSync(join(tmpdir(), "home-watch-tg-errors-"));
+  const rootDir = mkdtempSync(join(tmpdir(), "home-guard-tg-errors-"));
   const statePath = join(rootDir, "runtime_state.json");
   try {
     assert.equal(formatRecentErrorLogs(statePath), "No recent Bot-owned runtime errors.");
@@ -52,7 +52,7 @@ test("formatRecentErrorLogs returns clear empty state and bounded recent entries
 });
 
 test("formatRecentErrorLogs redacts valid persisted entries at response time", () => {
-  const rootDir = mkdtempSync(join(tmpdir(), "home-watch-tg-errors-"));
+  const rootDir = mkdtempSync(join(tmpdir(), "home-guard-tg-errors-"));
   const statePath = join(rootDir, "runtime_state.json");
   try {
     writeFileSync(statePath, JSON.stringify({
@@ -61,7 +61,7 @@ test("formatRecentErrorLogs redacts valid persisted entries at response time", (
       errorLog: [{
         ts: "2026-05-26T00:00:00.000Z",
         source: "telegram_reply",
-        message: "token=secret failed for /private/tmp/home-watch/photo.jpg",
+        message: "token=secret failed for /private/tmp/home-guard/photo.jpg",
       }],
     }));
 
@@ -69,7 +69,7 @@ test("formatRecentErrorLogs redacts valid persisted entries at response time", (
     assert.match(logs, /token=\[redacted\]/);
     assert.match(logs, /\[redacted-media-path\]/);
     assert.equal(logs.includes("secret"), false);
-    assert.equal(logs.includes("/private/tmp/home-watch/photo.jpg"), false);
+    assert.equal(logs.includes("/private/tmp/home-guard/photo.jpg"), false);
   } finally {
     rmSync(rootDir, { recursive: true, force: true });
   }
@@ -85,7 +85,7 @@ test("redactSecrets and sanitizeErrorMessage avoid multiline or token leakage", 
     "authorization=[redacted] next line",
   );
   assert.equal(
-    sanitizeErrorMessage("failed to upload /private/tmp/home-watch/camera-secret.mp4"),
+    sanitizeErrorMessage("failed to upload /private/tmp/home-guard/camera-secret.mp4"),
     "failed to upload [redacted-media-path]",
   );
 });

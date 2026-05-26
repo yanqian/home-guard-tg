@@ -91,7 +91,7 @@ export async function handleCameraClip(args, cameraClipConfig, options = {}) {
 
   let tempDir = null;
   try {
-    tempDir = await mkdtemp(join(tmpdir(), "home-watch-tg-camera-"));
+    tempDir = await mkdtemp(join(tmpdir(), "home-guard-tg-camera-"));
     const outputPath = join(tempDir, "clip.mp4");
     const argv = cameraClipConfig.argvTemplate.map((item) => item
       .replaceAll("{seconds}", String(seconds))

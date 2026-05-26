@@ -4,7 +4,7 @@ import { readFileSync } from "node:fs";
 import { commandList } from "../../src/commands.js";
 import { HELP_RESPONSE } from "../../src/constants.js";
 
-test("command surface contains only home-watch commands", () => {
+test("command surface contains only home-guard commands", () => {
   assert.deepEqual(commandList(), ["/camera_clip", "/camera_test", "/photo", "/schedule_photo", "/cancel_schedule", "/sound_alarm", "/logs", "/status", "/help"]);
   assert.equal(commandList().includes("/agent"), false);
   assert.equal(commandList().includes("/work"), false);

@@ -49,7 +49,7 @@ test("handleCameraTest runs shell-disabled probe and returns bounded stderr diag
       child.kill = () => true;
       setImmediate(() => {
         child.stderr.emit("data", "line 1\n");
-        child.stderr.emit("data", "token=secret /private/tmp/home-watch/photo.jpg\n");
+        child.stderr.emit("data", "token=secret /private/tmp/home-guard/photo.jpg\n");
         child.emit("close", 251);
       });
       return child;

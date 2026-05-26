@@ -20,7 +20,7 @@ export async function formatStatus({
   const alarmConfig = alarmStatus?.configValid ? "valid" : "invalid";
 
   return [
-    "Home watch Bot is running.",
+    "Home guard Bot is running.",
     `Response timestamp: ${responseTime.toISOString()}`,
     `Bot uptime: ${formatDuration(responseTime.getTime() - startedAtMs)}`,
     `Camera command: ${cameraStatus?.enabled ? "enabled" : "disabled"}`,

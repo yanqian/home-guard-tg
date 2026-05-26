@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { commandList, parseCommand } from "../../src/commands.js";
 import { HELP_RESPONSE } from "../../src/constants.js";
 
-test("commandList exposes only home-watch commands", () => {
+test("commandList exposes only home-guard commands", () => {
   assert.deepEqual(commandList(), ["/camera_clip", "/camera_test", "/photo", "/schedule_photo", "/cancel_schedule", "/sound_alarm", "/logs", "/status", "/help"]);
 });
 

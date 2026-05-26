@@ -77,7 +77,7 @@ export async function handlePhoto(photoConfig, options = {}) {
 
   let tempDir = null;
   try {
-    tempDir = await mkdtemp(join(tmpdir(), "home-watch-tg-photo-"));
+    tempDir = await mkdtemp(join(tmpdir(), "home-guard-tg-photo-"));
     const outputPath = join(tempDir, normalizeOutputFileName(photoConfig.outputFileName));
     const argv = photoConfig.argvTemplate.map((item) => item.replaceAll("{output}", outputPath));
     const result = await runCapture(argv, {

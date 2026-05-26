@@ -40,7 +40,7 @@ test("sendTelegramMessage validates Telegram response success", async () => {
 });
 
 test("sendTelegramReply sends videos and cleans up media", async () => {
-  const tempDir = mkdtempSync(join(tmpdir(), "home-watch-tg-video-"));
+  const tempDir = mkdtempSync(join(tmpdir(), "home-guard-tg-video-"));
   const videoPath = join(tempDir, "clip.mp4");
   const calls = [];
   try {
@@ -69,7 +69,7 @@ test("sendTelegramReply sends videos and cleans up media", async () => {
 });
 
 test("sendTelegramReply sends photos and cleans up media", async () => {
-  const tempDir = mkdtempSync(join(tmpdir(), "home-watch-tg-photo-"));
+  const tempDir = mkdtempSync(join(tmpdir(), "home-guard-tg-photo-"));
   const photoPath = join(tempDir, "still.png");
   const calls = [];
   try {

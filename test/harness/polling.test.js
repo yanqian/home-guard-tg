@@ -10,7 +10,7 @@ import { pollOnce } from "../../src/polling.js";
 import { saveRuntimeState } from "../../src/runtime-state.js";
 
 test("pollOnce dispatches camera clip and sends Telegram video", async () => {
-  const rootDir = mkdtempSync(join(tmpdir(), "home-watch-tg-poll-"));
+  const rootDir = mkdtempSync(join(tmpdir(), "home-guard-tg-poll-"));
   const statePath = join(rootDir, "runtime_state.json");
   const calls = [];
   const outputs = [];
@@ -67,7 +67,7 @@ test("pollOnce dispatches camera clip and sends Telegram video", async () => {
 });
 
 test("pollOnce dispatches camera test and sends stderr diagnostics", async () => {
-  const rootDir = mkdtempSync(join(tmpdir(), "home-watch-tg-poll-"));
+  const rootDir = mkdtempSync(join(tmpdir(), "home-guard-tg-poll-"));
   const statePath = join(rootDir, "runtime_state.json");
   const calls = [];
   try {
@@ -125,7 +125,7 @@ test("pollOnce dispatches camera test and sends stderr diagnostics", async () =>
 });
 
 test("pollOnce records failed text replies as Bot-owned runtime errors", async () => {
-  const rootDir = mkdtempSync(join(tmpdir(), "home-watch-tg-poll-"));
+  const rootDir = mkdtempSync(join(tmpdir(), "home-guard-tg-poll-"));
   const statePath = join(rootDir, "runtime_state.json");
   try {
     saveRuntimeState(statePath, { telegramUpdateOffset: 8 });
@@ -167,7 +167,7 @@ test("pollOnce records failed text replies as Bot-owned runtime errors", async (
 });
 
 test("pollOnce reports video send failure with bounded text and deletes temp file", async () => {
-  const rootDir = mkdtempSync(join(tmpdir(), "home-watch-tg-poll-"));
+  const rootDir = mkdtempSync(join(tmpdir(), "home-guard-tg-poll-"));
   const statePath = join(rootDir, "runtime_state.json");
   const calls = [];
   const outputs = [];
@@ -242,7 +242,7 @@ test("pollOnce reports video send failure with bounded text and deletes temp fil
 });
 
 test("pollOnce dispatches photo and sends Telegram photo", async () => {
-  const rootDir = mkdtempSync(join(tmpdir(), "home-watch-tg-poll-"));
+  const rootDir = mkdtempSync(join(tmpdir(), "home-guard-tg-poll-"));
   const statePath = join(rootDir, "runtime_state.json");
   const calls = [];
   const outputs = [];
@@ -300,7 +300,7 @@ test("pollOnce dispatches photo and sends Telegram photo", async () => {
 });
 
 test("pollOnce reports photo send failure with bounded text and deletes temp file", async () => {
-  const rootDir = mkdtempSync(join(tmpdir(), "home-watch-tg-poll-"));
+  const rootDir = mkdtempSync(join(tmpdir(), "home-guard-tg-poll-"));
   const statePath = join(rootDir, "runtime_state.json");
   const calls = [];
   const outputs = [];

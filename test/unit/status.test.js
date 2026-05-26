@@ -24,7 +24,7 @@ test("formatStatus reports bot, config, activity, host telemetry, and timestamp"
   });
 
   assert.equal(response, [
-    "Home watch Bot is running.",
+    "Home guard Bot is running.",
     "Response timestamp: 2026-05-26T01:02:03.000Z",
     "Bot uptime: 1h 2m 3s",
     "Camera command: enabled",

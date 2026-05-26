@@ -2,7 +2,7 @@
 
 ## Current System Status
 
-The repository contains a standalone trusted-host Telegram polling Bot for personal home-watch use.
+The repository contains a standalone trusted-host Telegram polling Bot for personal home-guard use.
 
 Implemented behavior:
 

@@ -3,7 +3,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { start } from "../src/polling.js";
 
-const rootDir = mkdtempSync(join(tmpdir(), "home-watch-tg-smoke-"));
+const rootDir = mkdtempSync(join(tmpdir(), "home-guard-tg-smoke-"));
 
 try {
   const result = start(

@@ -16,7 +16,7 @@ test("assertStartupEnv validates token and chat ids", () => {
 });
 
 test("createStartupContext parses camera config and paths", () => {
-  const rootDir = mkdtempSync(join(tmpdir(), "home-watch-tg-config-"));
+  const rootDir = mkdtempSync(join(tmpdir(), "home-guard-tg-config-"));
   try {
     const context = createStartupContext({
       TELEGRAM_BOT_TOKEN: "token",

@@ -32,7 +32,7 @@ test("millisecondsUntilNextLocalTime uses server-local Date semantics", () => {
 });
 
 test("handleCancelSchedule clears persisted schedule idempotently", async () => {
-  const rootDir = mkdtempSync(join(tmpdir(), "home-watch-tg-cancel-schedule-"));
+  const rootDir = mkdtempSync(join(tmpdir(), "home-guard-tg-cancel-schedule-"));
   const statePath = join(rootDir, "runtime_state.json");
   let refreshCount = 0;
   try {
@@ -73,7 +73,7 @@ test("handleCancelSchedule clears persisted schedule idempotently", async () => 
 });
 
 test("createDailyPhotoScheduler sends scheduled photos through the photo reply path", async () => {
-  const rootDir = mkdtempSync(join(tmpdir(), "home-watch-tg-schedule-"));
+  const rootDir = mkdtempSync(join(tmpdir(), "home-guard-tg-schedule-"));
   const statePath = join(rootDir, "runtime_state.json");
   const fetchCalls = [];
   let timeoutCallback = null;

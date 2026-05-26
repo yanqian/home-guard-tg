@@ -59,7 +59,7 @@ test("normalizeRuntimeState keeps bounded valid error log entries", () => {
 });
 
 test("loadRuntimeState creates default state and saveRuntimeState writes normalized JSON", () => {
-  const rootDir = mkdtempSync(join(tmpdir(), "home-watch-tg-state-"));
+  const rootDir = mkdtempSync(join(tmpdir(), "home-guard-tg-state-"));
   const statePath = join(rootDir, "runtime_state.json");
   try {
     assert.deepEqual(loadRuntimeState(statePath), {

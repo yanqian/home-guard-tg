@@ -8,7 +8,7 @@ import { createApp } from "../../src/app.js";
 import { appendRuntimeError } from "../../src/error-log.js";
 
 test("app rejects unauthorized and handles help/status", async () => {
-  const rootDir = mkdtempSync(join(tmpdir(), "home-watch-tg-app-"));
+  const rootDir = mkdtempSync(join(tmpdir(), "home-guard-tg-app-"));
   const statePath = join(rootDir, "runtime_state.json");
   const app = createApp({
     allowedChatIds: ["123"],
@@ -37,7 +37,7 @@ test("app rejects unauthorized and handles help/status", async () => {
   assert.equal(await app.handleMessage({ chatId: "123", text: "/logs" }), "No recent Bot-owned runtime errors.");
   appendRuntimeError(statePath, {
     source: "polling",
-    error: "token=secret failed while sending /private/tmp/home-watch/photo.jpg",
+    error: "token=secret failed while sending /private/tmp/home-guard/photo.jpg",
     now: () => new Date("2026-05-26T00:00:06.000Z"),
   });
   const logs = await app.handleMessage({ chatId: "123", text: "/logs" });
@@ -173,7 +173,7 @@ test("app handles /photo with fake capture", async () => {
 });
 
 test("app handles /schedule_photo by persisting one enabled daily photo schedule", async () => {
-  const rootDir = mkdtempSync(join(tmpdir(), "home-watch-tg-app-"));
+  const rootDir = mkdtempSync(join(tmpdir(), "home-guard-tg-app-"));
   const statePath = join(rootDir, "runtime_state.json");
   let refreshCount = 0;
   try {
@@ -218,7 +218,7 @@ test("app handles /schedule_photo by persisting one enabled daily photo schedule
 });
 
 test("app handles /cancel_schedule by clearing only active daily photo schedule state", async () => {
-  const rootDir = mkdtempSync(join(tmpdir(), "home-watch-tg-app-"));
+  const rootDir = mkdtempSync(join(tmpdir(), "home-guard-tg-app-"));
   const statePath = join(rootDir, "runtime_state.json");
   let refreshCount = 0;
   try {
@@ -257,7 +257,7 @@ test("app handles /cancel_schedule by clearing only active daily photo schedule 
 });
 
 test("app rejects /schedule_photo before persistence when photo config is disabled or malformed", async () => {
-  const rootDir = mkdtempSync(join(tmpdir(), "home-watch-tg-app-"));
+  const rootDir = mkdtempSync(join(tmpdir(), "home-guard-tg-app-"));
   const statePath = join(rootDir, "runtime_state.json");
   try {
     const disabledApp = createApp({

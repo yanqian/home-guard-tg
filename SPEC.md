@@ -2,7 +2,7 @@
 
 # 1. Project Purpose
 
-`home-watch-tg` is a small trusted-host Telegram Bot for personal home-watch utilities.
+`home-guard-tg` is a small trusted-host Telegram Bot for personal home-guard utilities.
 
 The first supported capability is recording a short local camera clip on the Mac running the Bot and sending it to an authorized Telegram chat.
 
