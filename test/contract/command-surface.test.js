@@ -21,9 +21,12 @@ test("help output matches documented command surface", () => {
 
 test("feature_list contains unique completed initial feature", () => {
   const data = JSON.parse(readFileSync("feature_list.json", "utf8"));
-  assert.deepEqual(data.features.map((feature) => feature.id), ["F001"]);
-  assert.equal(data.features[0].passes, true);
-  assert.equal(data.features[0].status, "done");
+  const ids = data.features.map((feature) => feature.id);
+  assert.equal(new Set(ids).size, ids.length);
+  const initialFeature = data.features.find((feature) => feature.id === "F001");
+  assert.ok(initialFeature);
+  assert.equal(initialFeature.passes, true);
+  assert.equal(initialFeature.status, "done");
 });
 
 test("AGENTS external behavior rule is present", () => {

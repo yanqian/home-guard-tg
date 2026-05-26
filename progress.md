@@ -24,8 +24,9 @@ Implemented behavior:
 
 ## Next Feature
 
-None currently listed.
+`F002` - Add `/photo` still image capture and Telegram send support.
 
 ## Known Issues
 
 - Real camera use depends on host camera permissions and a valid capture command such as `ffmpeg` with a correct AVFoundation device index.
+- Newly planned commands have no currently open implementation questions in `SPEC.md` section 3.8.
