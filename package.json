@@ -1,0 +1,14 @@
+{
+  "name": "home-watch-tg",
+  "version": "0.1.0",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "build": "find src test scripts -name '*.js' -print0 | xargs -0 -n1 node --check",
+    "start": "node src/polling.js",
+    "test:unit": "node --test test/unit/*.test.js",
+    "test:harness": "node --test test/harness/*.test.js",
+    "test:contract": "node --test test/contract/*.test.js",
+    "smoke": "node scripts/smoke.js"
+  }
+}

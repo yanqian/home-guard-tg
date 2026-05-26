@@ -1,0 +1,7 @@
+node_modules/
+runtime_state.json
+logs/
+.env
+.env.local
+*.mp4
+*.mov
