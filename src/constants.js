@@ -3,6 +3,7 @@ export const COMMANDS = Object.freeze([
   "/photo",
   "/schedule_photo",
   "/cancel_schedule",
+  "/sound_alarm",
   "/status",
   "/help",
 ]);
@@ -10,6 +11,7 @@ export const COMMANDS = Object.freeze([
 export const COMMANDS_REQUIRING_ARGS = Object.freeze({
   "/camera_clip": "Usage: /camera_clip <seconds>",
   "/schedule_photo": "Usage: /schedule_photo HH:MM",
+  "/sound_alarm": "Usage: /sound_alarm <seconds>",
 });
 
 export const UNAUTHORIZED_RESPONSE = "Unauthorized chat.";
@@ -21,6 +23,7 @@ export const HELP_RESPONSE = [
   "/photo - capture and send one still image",
   "/schedule_photo HH:MM - schedule one daily still image at server-local time",
   "/cancel_schedule - cancel the active daily photo schedule",
+  "/sound_alarm <seconds> - play a local audible alert; cautious use only",
   "/status - show Bot status",
   "/help - show this command list",
 ].join("\n");

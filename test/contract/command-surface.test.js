@@ -5,7 +5,7 @@ import { commandList } from "../../src/commands.js";
 import { HELP_RESPONSE } from "../../src/constants.js";
 
 test("command surface contains only home-watch commands", () => {
-  assert.deepEqual(commandList(), ["/camera_clip", "/photo", "/schedule_photo", "/cancel_schedule", "/status", "/help"]);
+  assert.deepEqual(commandList(), ["/camera_clip", "/photo", "/schedule_photo", "/cancel_schedule", "/sound_alarm", "/status", "/help"]);
   assert.equal(commandList().includes("/agent"), false);
   assert.equal(commandList().includes("/work"), false);
 });
@@ -17,6 +17,7 @@ test("help output matches documented command surface", () => {
   "/photo - capture and send one still image",
   "/schedule_photo HH:MM - schedule one daily still image at server-local time",
   "/cancel_schedule - cancel the active daily photo schedule",
+  "/sound_alarm <seconds> - play a local audible alert; cautious use only",
   "/status - show Bot status",
   "/help - show this command list",
 ].join("\n"));

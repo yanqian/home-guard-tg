@@ -27,6 +27,8 @@ test("createStartupContext parses camera config and paths", () => {
       ENABLE_PHOTO_COMMAND: "1",
       PHOTO_COMMAND_JSON: JSON.stringify(["fake-photo", "{output}"]),
       PHOTO_OUTPUT_FILENAME: "still.png",
+      ENABLE_SOUND_ALARM_COMMAND: "1",
+      SOUND_ALARM_COMMAND_JSON: JSON.stringify(["fake-alarm", "{seconds}"]),
     }, { rootDir });
     assert.equal(context.telegramBotToken, "token");
     assert.deepEqual(context.allowedChatIds, ["123"]);
@@ -35,6 +37,8 @@ test("createStartupContext parses camera config and paths", () => {
     assert.equal(context.photoConfig.enabled, true);
     assert.equal(context.photoConfig.error, null);
     assert.equal(context.photoConfig.outputFileName, "still.png");
+    assert.equal(context.soundAlarmConfig.enabled, true);
+    assert.equal(context.soundAlarmConfig.error, null);
     assert.equal(context.rootDir, rootDir);
   } finally {
     rmSync(rootDir, { recursive: true, force: true });

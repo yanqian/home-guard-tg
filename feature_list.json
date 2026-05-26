@@ -39,9 +39,9 @@
     {
       "id": "F005",
       "description": "Add cautious-use /sound_alarm <seconds> for authorized chats to play a local audible alert on the Mac for a bounded duration; keep it disabled unless explicitly enabled, accept only integer seconds from 1 through 30, do not require two-step confirmation beyond authorized-chat access, run a configured argv array template or verified built-in platform command without unbounded shell strings, enforce timeout and cleanup, reject concurrent alarms, document cautious use in help/status surfaces, and ensure default tests never play real audio.",
-      "passes": false,
-      "status": "todo",
-      "attempts": 0,
+      "passes": true,
+      "status": "done",
+      "attempts": 1,
       "last_error": "",
       "priority": "P2"
     },

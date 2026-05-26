@@ -2,6 +2,7 @@ import { mkdirSync } from "node:fs";
 import { resolve } from "node:path";
 import { parseCameraClipConfig } from "./camera-clip.js";
 import { parsePhotoConfig } from "./photo.js";
+import { parseSoundAlarmConfig } from "./sound-alarm.js";
 
 export function parseAllowedChatIds(value) {
   if (!value) {
@@ -32,6 +33,10 @@ export function assertStartupEnv(env = process.env) {
       enabledValue: env.ENABLE_PHOTO_COMMAND,
       commandJson: env.PHOTO_COMMAND_JSON,
       outputFileName: env.PHOTO_OUTPUT_FILENAME,
+    }),
+    soundAlarmConfig: parseSoundAlarmConfig({
+      enabledValue: env.ENABLE_SOUND_ALARM_COMMAND,
+      commandJson: env.SOUND_ALARM_COMMAND_JSON,
     }),
   };
 }

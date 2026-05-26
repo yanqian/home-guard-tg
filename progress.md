@@ -8,7 +8,7 @@ Implemented behavior:
 
 - Startup configuration validates `TELEGRAM_BOT_TOKEN` and `ALLOWED_CHAT_IDS` outside `NODE_ENV=test`.
 - Runtime state persists Telegram update offset in `runtime_state.json`.
-- Command parsing supports `/camera_clip <seconds>`, `/photo`, `/status`, and `/help`.
+- Command parsing supports `/camera_clip <seconds>`, `/photo`, `/schedule_photo HH:MM`, `/cancel_schedule`, `/sound_alarm <seconds>`, `/status`, and `/help`.
 - Unauthorized chats and unknown commands receive bounded responses.
 - `/camera_clip <seconds>` is disabled unless `ENABLE_CAMERA_CLIP_COMMAND=1`.
 - `CAMERA_CLIP_COMMAND_JSON` must be a JSON argv array template containing `{seconds}` and `{output}`.
@@ -27,9 +27,15 @@ Implemented behavior:
 - Schedule creation reports the configured local time and server timezone context.
 - `/cancel_schedule` clears the persisted active daily photo schedule for authorized chats.
 - `/cancel_schedule` is idempotent when no schedule exists and does not interrupt an already-started media capture.
+- `/sound_alarm <seconds>` is disabled unless `ENABLE_SOUND_ALARM_COMMAND=1`.
+- `SOUND_ALARM_COMMAND_JSON` must be a JSON argv array template containing `{seconds}`.
+- Sound alarm playback validates integer durations from 1 through 30.
+- Sound alarm playback uses `shell=false`, ignored stdio, bounded timeout, and one active alarm at a time.
+- Help and status output label `/sound_alarm` as cautious use.
 - `/status` reports Bot uptime, response timestamp, camera/photo enabled and valid state, active media capture state, alarm availability, Mac power telemetry when available, private local IPs, and remaining disk space.
 - Status host telemetry uses bounded local collection, avoids public-IP lookup, and degrades to `unavailable` values when telemetry is unsupported or fails.
 - Default tests use fake capture and fake Telegram transport without real camera or network requirements.
+- Default tests use fake alarm subprocesses and never play real audio.
 
 ## Last Completed Feature
 
@@ -37,12 +43,13 @@ Implemented behavior:
 
 ## Next Feature
 
-`F005` - Await implementation of cautious-use `/sound_alarm <seconds>`.
+`F005` - Implemented cautious-use `/sound_alarm <seconds>`; awaiting evaluator verification.
 
 ## Known Issues
 
 - Real camera use depends on host camera permissions and a valid capture command such as `ffmpeg` with a correct AVFoundation device index.
 - Real photo capture depends on host camera permissions and a valid still-image command such as `ffmpeg` with a correct AVFoundation device index.
+- Real alarm playback depends on an explicitly configured local alarm command and safe local volume.
 - Status power telemetry depends on the macOS `pmset -g batt` command being available and responsive.
 - Status disk telemetry depends on the local `df -k` command being available and responsive.
 - Newly planned commands have no currently open implementation questions in `SPEC.md` section 3.8.

@@ -16,9 +16,8 @@ export async function formatStatus({
   const responseTime = now();
   const hostTelemetry = await safeCollectHostTelemetry(collectHostTelemetry, responseTime);
   const mediaActive = Boolean(cameraStatus?.activeCapture || photoStatus?.activeCapture);
-  const alarmLine = alarmStatus.available
-    ? `Alarm: ${alarmStatus.active ? "active" : "idle"}`
-    : "Alarm: unavailable";
+  const alarmCommand = alarmStatus?.enabled ? "enabled" : "disabled";
+  const alarmConfig = alarmStatus?.configValid ? "valid" : "invalid";
 
   return [
     "Home watch Bot is running.",
@@ -29,7 +28,9 @@ export async function formatStatus({
     `Photo command: ${photoStatus?.enabled ? "enabled" : "disabled"}`,
     `Photo config: ${photoStatus?.configValid ? "valid" : "invalid"}`,
     `Media capture: ${mediaActive ? "active" : "idle"}`,
-    alarmLine,
+    `Alarm command: ${alarmCommand} (cautious use)`,
+    `Alarm config: ${alarmConfig}`,
+    `Alarm activity: ${alarmStatus?.active ? "active" : "idle"}`,
     `Battery level: ${hostTelemetry.batteryLevel}`,
     `Power source: ${hostTelemetry.powerSource}`,
     `Local IPs: ${hostTelemetry.localIps.length > 0 ? hostTelemetry.localIps.join(", ") : "unavailable"}`,

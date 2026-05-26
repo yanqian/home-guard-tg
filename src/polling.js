@@ -24,6 +24,11 @@ export function start(env = process.env, options = {}) {
       spawnImpl: options.photoSpawn,
       timeoutMs: options.photoTimeoutMs,
     },
+    soundAlarmConfig: context.soundAlarmConfig,
+    soundAlarmOptions: {
+      spawnImpl: options.soundAlarmSpawn,
+      timeoutMs: options.soundAlarmTimeoutMs,
+    },
     schedulePhotoOptions: {
       statePath: context.statePath,
       onScheduleChanged() {
@@ -63,6 +68,7 @@ export function start(env = process.env, options = {}) {
     statePath: context.statePath,
     cameraClipConfig: context.cameraClipConfig,
     photoConfig: context.photoConfig,
+    soundAlarmConfig: context.soundAlarmConfig,
     controller: {
       stop() {
         scheduleController.stop();

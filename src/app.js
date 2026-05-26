@@ -4,6 +4,7 @@ import { HELP_RESPONSE } from "./constants.js";
 import { getCameraClipStatus, handleCameraClip } from "./camera-clip.js";
 import { getPhotoStatus, handlePhoto } from "./photo.js";
 import { handleCancelSchedule, handleSchedulePhoto } from "./schedule-photo.js";
+import { getSoundAlarmStatus, handleSoundAlarm } from "./sound-alarm.js";
 import { formatStatus } from "./status.js";
 
 export function createApp({
@@ -12,6 +13,8 @@ export function createApp({
   cameraClipOptions = {},
   photoConfig,
   photoOptions = {},
+  soundAlarmConfig,
+  soundAlarmOptions = {},
   schedulePhotoOptions = {},
   statusOptions = {},
 } = {}) {
@@ -35,7 +38,7 @@ export function createApp({
         return formatStatus({
           cameraStatus: getCameraClipStatus(cameraClipConfig),
           photoStatus: getPhotoStatus(photoConfig),
-          alarmStatus: statusOptions.alarmStatus,
+          alarmStatus: statusOptions.alarmStatus ?? getSoundAlarmStatus(soundAlarmConfig),
           startedAtMs,
           now: statusOptions.now,
           collectHostTelemetry: statusOptions.collectHostTelemetry,
@@ -46,6 +49,9 @@ export function createApp({
       }
       if (parsed.command === "/photo") {
         return handlePhoto(photoConfig, photoOptions);
+      }
+      if (parsed.command === "/sound_alarm") {
+        return handleSoundAlarm(parsed.args, soundAlarmConfig, soundAlarmOptions);
       }
       if (parsed.command === "/schedule_photo") {
         return handleSchedulePhoto({

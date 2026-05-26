@@ -26,9 +26,38 @@ test("app rejects unauthorized and handles help/status", async () => {
   const status = await app.handleMessage({ chatId: "123", text: "/status" });
   assert.match(status, /Camera command: disabled/);
   assert.match(status, /Photo command: disabled/);
+  assert.match(status, /Alarm command: disabled \(cautious use\)/);
   assert.match(status, /Bot uptime: 5s/);
   assert.match(status, /Response timestamp: 2026-05-26T00:00:05.000Z/);
   assert.match(status, /Local IPs: unavailable/);
+});
+
+test("app handles /sound_alarm with fake alarm command", async () => {
+  const alarmCalls = [];
+  const app = createApp({
+    allowedChatIds: ["123"],
+    soundAlarmConfig: {
+      enabled: true,
+      argvTemplate: ["fake-alarm", "--seconds", "{seconds}"],
+      error: null,
+    },
+    soundAlarmOptions: {
+      timeoutMs: 1000,
+      spawnImpl(command, args, options) {
+        alarmCalls.push({ command, args, options });
+        const child = new EventEmitter();
+        setImmediate(() => child.emit("close", 0));
+        child.kill = () => true;
+        return child;
+      },
+    },
+  });
+
+  assert.equal((await app.handleMessage({ chatId: "123", text: "/sound_alarm nope" })).response, "Usage: /sound_alarm <seconds> where seconds is an integer from 1 to 30.");
+  const reply = await app.handleMessage({ chatId: "123", text: "/sound_alarm 3" });
+  assert.equal(reply.response, "Sound alarm played for 3s. Cautious use only.");
+  assert.equal(alarmCalls[0].command, "fake-alarm");
+  assert.deepEqual(alarmCalls[0].args, ["--seconds", "3"]);
 });
 
 test("app handles /camera_clip without unrelated agent behavior", async () => {
