@@ -5,4 +5,5 @@
 - `npm run test:harness` runs polling and app integration tests with fake Telegram and fake capture.
 - `npm run test:contract` verifies command surface and durable state files.
 - `npm run smoke` verifies startup with fake configuration.
+- `python3 -m py_compile orchestrator.py` verifies the unattended workflow script parses.
 - `./init.sh` runs the full verification sequence.

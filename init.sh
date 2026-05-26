@@ -14,6 +14,7 @@ required_files=(
   "progress.md"
   "test_plan.md"
   "init.sh"
+  "orchestrator.py"
 )
 
 for path in "${required_files[@]}"; do
@@ -25,6 +26,9 @@ done
 
 echo "== State validation =="
 python3 scripts/verify-state.py
+
+echo "== Orchestrator compile check =="
+python3 -m py_compile orchestrator.py
 
 run_npm_script_if_present() {
   local script_name="$1"

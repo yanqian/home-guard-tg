@@ -51,9 +51,43 @@ Strict rules:
 * Only append new feature entries
 * Preserve all existing data and state
 
+After updating:
+
+* Ensure `SPEC.md` remains structurally valid
+* Ensure `feature_list.json` is valid JSON
+* Ensure there are no duplicate feature IDs
+
+## Orchestrator
+
+`orchestrator.py` owns unattended feature execution.
+
+Responsibilities:
+
+* Run the startup protocol before doing anything else
+* Pick one unfinished feature per round
+* Mark the selected feature `status="in_progress"`
+* Increment the selected feature's `attempts`
+* Run a Coding Agent for that one feature
+* Run an Evaluator Agent for that same feature
+* Mark the feature done only after evaluator pass
+* Mark the feature failed or blocked after coding/evaluation failure
+* Commit the round's new working-tree changes
+
+The normal unattended flow is:
+
+```text
+orchestrator.py
+  -> Coding Agent implements Fxxx
+  -> Evaluator Agent verifies Fxxx
+  -> PASS: mark done and commit "Complete Fxxx"
+  -> FAIL: mark todo/blocked, record last_error, and commit "Block Fxxx"
+```
+
+The orchestrator, not the Coding Agent, owns the final commit during unattended runs.
+
 ## Coding Agent
 
-The Coding Agent implements exactly one feature.
+The Coding Agent implements exactly one feature selected by the orchestrator.
 
 Responsibilities:
 
@@ -67,6 +101,10 @@ Responsibilities:
 * Update `progress.md`
 * Update only the current feature in `feature_list.json`
 * Preserve unknown fields and feature ordering
+* Do not stage or commit during orchestrated runs
+* Do not modify unrelated pre-existing working tree changes
+
+The Coding Agent must not mark unrelated features as done.
 
 ## Evaluator Agent
 
@@ -82,6 +120,14 @@ Responsibilities:
 * Run relevant tests or harness checks if available
 * Verify the feature against its description and acceptance criteria
 
+Strict rules:
+
+* Do not implement new features
+* Do not mark unrelated features as done
+* Do not accept incomplete work
+* Prevent premature completion
+* If verification fails, explain the exact failure
+
 The Evaluator Agent must output exactly one of:
 
 ```text
@@ -93,7 +139,7 @@ EVAL_FAIL: Fxxx: <reason>
 
 # Startup Protocol
 
-Every Coding Agent and Evaluator Agent run must:
+Every Coding Agent, Evaluator Agent, and orchestrator run must:
 
 1. Read `progress.md`
 2. Read `feature_list.json`
@@ -108,6 +154,48 @@ Every Coding Agent and Evaluator Agent run must:
    ```bash
    ./init.sh
    ```
+
+Then:
+
+* Coding Agent: implement only the requested feature
+* Evaluator Agent: verify only the requested feature
+* Orchestrator: select and process one feature per round
+
+---
+
+# Orchestrator Commands
+
+Run unattended development rounds:
+
+```bash
+python3 orchestrator.py
+```
+
+Run a fixed number of rounds:
+
+```bash
+python3 orchestrator.py --max-rounds 5
+```
+
+Run evaluator only for one completed feature:
+
+```bash
+python3 orchestrator.py --eval-only F001
+```
+
+Run evaluator only for all features:
+
+```bash
+python3 orchestrator.py --eval-only all
+```
+
+Preview prompts and actions without executing agents:
+
+```bash
+python3 orchestrator.py --dry-run
+```
+
+`--eval-only` must not run the Coding Agent, update feature state, or commit.
 
 ---
 
@@ -133,6 +221,14 @@ Rules:
 * `passes=false` means the feature is not complete
 * Agents must not delete fields
 * Agents must preserve unknown fields
+* `attempts` is incremented when the orchestrator starts a round for that feature
+
+## State Safety Rules
+
+* Do not overwrite the entire `feature_list.json` unnecessarily
+* Update only the current feature during Coding Agent work
+* Preserve ordering and existing fields
+* Do not remove metadata fields
 
 ## progress.md
 
@@ -175,6 +271,7 @@ Rules:
 * Keep Telegram secrets out of git
 * Keep camera media out of git and logs
 * Do not add hidden or continuous monitoring without explicit feature planning
+* The orchestrator commits unattended round results
 
 ---
 
