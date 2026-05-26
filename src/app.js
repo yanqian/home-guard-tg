@@ -2,6 +2,7 @@ import { authorizeMessage } from "./auth.js";
 import { parseCommand } from "./commands.js";
 import { HELP_RESPONSE } from "./constants.js";
 import { getCameraClipStatus, handleCameraClip } from "./camera-clip.js";
+import { handleCameraTest } from "./camera-test.js";
 import { getPhotoStatus, handlePhoto } from "./photo.js";
 import { handleCancelSchedule, handleSchedulePhoto } from "./schedule-photo.js";
 import { getSoundAlarmStatus, handleSoundAlarm } from "./sound-alarm.js";
@@ -12,6 +13,8 @@ export function createApp({
   allowedChatIds,
   cameraClipConfig,
   cameraClipOptions = {},
+  cameraTestConfig,
+  cameraTestOptions = {},
   photoConfig,
   photoOptions = {},
   soundAlarmConfig,
@@ -51,6 +54,9 @@ export function createApp({
       }
       if (parsed.command === "/camera_clip") {
         return handleCameraClip(parsed.args, cameraClipConfig, cameraClipOptions);
+      }
+      if (parsed.command === "/camera_test") {
+        return handleCameraTest(cameraTestConfig, cameraTestOptions);
       }
       if (parsed.command === "/photo") {
         return handlePhoto(photoConfig, photoOptions);

@@ -21,6 +21,11 @@ export function start(env = process.env, options = {}) {
       spawnImpl: options.cameraClipSpawn,
       timeoutMs: options.cameraClipTimeoutMs,
     },
+    cameraTestConfig: context.cameraTestConfig,
+    cameraTestOptions: {
+      spawnImpl: options.cameraTestSpawn,
+      timeoutMs: options.cameraTestTimeoutMs,
+    },
     photoConfig: context.photoConfig,
     photoOptions: {
       spawnImpl: options.photoSpawn,
@@ -77,6 +82,7 @@ export function start(env = process.env, options = {}) {
     rootDir: context.rootDir,
     statePath: context.statePath,
     cameraClipConfig: context.cameraClipConfig,
+    cameraTestConfig: context.cameraTestConfig,
     photoConfig: context.photoConfig,
     soundAlarmConfig: context.soundAlarmConfig,
     controller: {

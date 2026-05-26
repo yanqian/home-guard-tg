@@ -108,6 +108,38 @@ test("app handles /camera_clip without unrelated agent behavior", async () => {
   rmSync(reply.telegramVideo.cleanupPaths[0], { recursive: true, force: true });
 });
 
+test("app handles /camera_test with fake ffmpeg stderr", async () => {
+  const probeCalls = [];
+  const app = createApp({
+    allowedChatIds: ["123"],
+    cameraTestConfig: {
+      enabled: true,
+      argv: ["fake-ffmpeg", "-hide_banner", "-f", "avfoundation", "-i", "0:none"],
+      error: null,
+    },
+    cameraTestOptions: {
+      timeoutMs: 1000,
+      spawnImpl(command, args) {
+        probeCalls.push({ command, args });
+        const child = new EventEmitter();
+        child.stderr = new EventEmitter();
+        child.kill = () => true;
+        setImmediate(() => {
+          child.stderr.emit("data", "[AVFoundation indev] device permission denied\n");
+          child.emit("close", 1);
+        });
+        return child;
+      },
+    },
+  });
+
+  const reply = await app.handleMessage({ chatId: "123", text: "/camera_test" });
+  assert.match(reply, /Camera test finished with exit code 1\./);
+  assert.match(reply, /device permission denied/);
+  assert.equal(probeCalls[0].command, "fake-ffmpeg");
+  assert.deepEqual(probeCalls[0].args, ["-hide_banner", "-f", "avfoundation", "-i", "0:none"]);
+});
+
 test("app handles /photo with fake capture", async () => {
   const captureCalls = [];
   const app = createApp({

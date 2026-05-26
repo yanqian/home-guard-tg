@@ -8,7 +8,7 @@ Implemented behavior:
 
 - Startup configuration validates `TELEGRAM_BOT_TOKEN` and `ALLOWED_CHAT_IDS` outside `NODE_ENV=test`.
 - Runtime state persists Telegram update offset in `runtime_state.json`.
-- Command parsing supports `/camera_clip <seconds>`, `/photo`, `/schedule_photo HH:MM`, `/cancel_schedule`, `/sound_alarm <seconds>`, `/logs`, `/status`, and `/help`.
+- Command parsing supports `/camera_clip <seconds>`, `/camera_test`, `/photo`, `/schedule_photo HH:MM`, `/cancel_schedule`, `/sound_alarm <seconds>`, `/logs`, `/status`, and `/help`.
 - Unauthorized chats and unknown commands receive bounded responses.
 - `/camera_clip <seconds>` is disabled unless `ENABLE_CAMERA_CLIP_COMMAND=1`.
 - `CAMERA_CLIP_COMMAND_JSON` must be a JSON argv array template containing `{seconds}` and `{output}`.
@@ -16,6 +16,9 @@ Implemented behavior:
 - Camera capture uses `shell=false`, ignored stdio, bounded timeout, and one active capture at a time.
 - Successful clips are sent through Telegram `sendVideo`.
 - Temporary clips are deleted after send success or failure.
+- `/camera_test` is disabled unless `ENABLE_CAMERA_TEST_COMMAND=1`.
+- `/camera_test` uses a configured shell-disabled argv array or the verified default `ffmpeg -hide_banner -f avfoundation -list_devices true -i ""` probe.
+- `/camera_test` enforces a short timeout and returns only bounded, redacted stderr diagnostics without media content.
 - `/photo` is disabled unless `ENABLE_PHOTO_COMMAND=1`.
 - `PHOTO_COMMAND_JSON` must be a JSON argv array template containing `{output}`.
 - Photo capture uses shell-disabled stdio-ignored subprocess execution with a bounded timeout and the shared media-capture lock.
@@ -45,11 +48,12 @@ Implemented behavior:
 
 ## Next Feature
 
-`F007` - Implemented `/logs` for recent Bot-owned runtime errors; awaiting evaluator verification.
+`F008` - Implemented `/camera_test` for bounded ffmpeg camera diagnostics; awaiting evaluator verification.
 
 ## Known Issues
 
 - Real camera use depends on host camera permissions and a valid capture command such as `ffmpeg` with a correct AVFoundation device index.
+- Camera diagnostics depend on local `ffmpeg` availability; direct verification on 2026-05-26 confirmed `ffmpeg 8.1` and the default AVFoundation device-list probe emits diagnostics on stderr and exits nonzero without media content.
 - Real photo capture depends on host camera permissions and a valid still-image command such as `ffmpeg` with a correct AVFoundation device index.
 - Real alarm playback depends on an explicitly configured local alarm command and safe local volume.
 - Status power telemetry depends on the macOS `pmset -g batt` command being available and responsive.

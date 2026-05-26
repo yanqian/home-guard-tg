@@ -5,7 +5,7 @@ import { commandList } from "../../src/commands.js";
 import { HELP_RESPONSE } from "../../src/constants.js";
 
 test("command surface contains only home-watch commands", () => {
-  assert.deepEqual(commandList(), ["/camera_clip", "/photo", "/schedule_photo", "/cancel_schedule", "/sound_alarm", "/logs", "/status", "/help"]);
+  assert.deepEqual(commandList(), ["/camera_clip", "/camera_test", "/photo", "/schedule_photo", "/cancel_schedule", "/sound_alarm", "/logs", "/status", "/help"]);
   assert.equal(commandList().includes("/agent"), false);
   assert.equal(commandList().includes("/work"), false);
 });
@@ -14,6 +14,7 @@ test("help output matches documented command surface", () => {
   assert.equal(HELP_RESPONSE, [
   "Available commands:",
   "/camera_clip <seconds> - capture and send a short local camera clip",
+  "/camera_test - run a short ffmpeg camera diagnostic probe",
   "/photo - capture and send one still image",
   "/schedule_photo HH:MM - schedule one daily still image at server-local time",
   "/cancel_schedule - cancel the active daily photo schedule",

@@ -1,6 +1,7 @@
 import { mkdirSync } from "node:fs";
 import { resolve } from "node:path";
 import { parseCameraClipConfig } from "./camera-clip.js";
+import { parseCameraTestConfig } from "./camera-test.js";
 import { parsePhotoConfig } from "./photo.js";
 import { parseSoundAlarmConfig } from "./sound-alarm.js";
 
@@ -28,6 +29,10 @@ export function assertStartupEnv(env = process.env) {
     cameraClipConfig: parseCameraClipConfig({
       enabledValue: env.ENABLE_CAMERA_CLIP_COMMAND,
       commandJson: env.CAMERA_CLIP_COMMAND_JSON,
+    }),
+    cameraTestConfig: parseCameraTestConfig({
+      enabledValue: env.ENABLE_CAMERA_TEST_COMMAND,
+      commandJson: env.CAMERA_TEST_COMMAND_JSON,
     }),
     photoConfig: parsePhotoConfig({
       enabledValue: env.ENABLE_PHOTO_COMMAND,

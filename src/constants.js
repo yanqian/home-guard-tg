@@ -1,5 +1,6 @@
 export const COMMANDS = Object.freeze([
   "/camera_clip",
+  "/camera_test",
   "/photo",
   "/schedule_photo",
   "/cancel_schedule",
@@ -21,6 +22,7 @@ export const UNKNOWN_COMMAND_RESPONSE = "Unknown command.\nUse /help.";
 export const HELP_RESPONSE = [
   "Available commands:",
   "/camera_clip <seconds> - capture and send a short local camera clip",
+  "/camera_test - run a short ffmpeg camera diagnostic probe",
   "/photo - capture and send one still image",
   "/schedule_photo HH:MM - schedule one daily still image at server-local time",
   "/cancel_schedule - cancel the active daily photo schedule",

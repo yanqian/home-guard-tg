@@ -66,6 +66,64 @@ test("pollOnce dispatches camera clip and sends Telegram video", async () => {
   }
 });
 
+test("pollOnce dispatches camera test and sends stderr diagnostics", async () => {
+  const rootDir = mkdtempSync(join(tmpdir(), "home-watch-tg-poll-"));
+  const statePath = join(rootDir, "runtime_state.json");
+  const calls = [];
+  try {
+    saveRuntimeState(statePath, { telegramUpdateOffset: 7 });
+    const app = createApp({
+      allowedChatIds: ["123"],
+      cameraTestConfig: {
+        enabled: true,
+        argv: ["fake-ffmpeg", "-hide_banner"],
+        error: null,
+      },
+      cameraTestOptions: {
+        timeoutMs: 1000,
+        spawnImpl() {
+          const child = new EventEmitter();
+          child.stderr = new EventEmitter();
+          child.kill = () => true;
+          setImmediate(() => {
+            child.stderr.emit("data", "device index not found\n");
+            child.emit("close", 1);
+          });
+          return child;
+        },
+      },
+    });
+
+    await pollOnce({
+      app,
+      statePath,
+      telegramBotToken: "token",
+      fetchImpl(url, options) {
+        calls.push({ url: url.toString(), options });
+        if (url.toString().includes("/getUpdates")) {
+          return Promise.resolve({
+            ok: true,
+            json: () => Promise.resolve({
+              ok: true,
+              result: [{ update_id: 7, message: { chat: { id: 123 }, text: "/camera_test" } }],
+            }),
+          });
+        }
+        return Promise.resolve({ ok: true, json: () => Promise.resolve({ ok: true }) });
+      },
+    });
+
+    assert.equal(calls[1].url, "https://api.telegram.org/bottoken/sendMessage");
+    assert.deepEqual(JSON.parse(calls[1].options.body), {
+      chat_id: "123",
+      text: "Camera test finished with exit code 1.\nLast stderr lines:\ndevice index not found",
+    });
+    assert.equal(JSON.parse(readFileSync(statePath, "utf8")).telegramUpdateOffset, 8);
+  } finally {
+    rmSync(rootDir, { recursive: true, force: true });
+  }
+});
+
 test("pollOnce reports video send failure with bounded text and deletes temp file", async () => {
   const rootDir = mkdtempSync(join(tmpdir(), "home-watch-tg-poll-"));
   const statePath = join(rootDir, "runtime_state.json");

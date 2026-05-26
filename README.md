@@ -7,6 +7,7 @@ This repository is intentionally separate from `agent-remote-tg`. It does not in
 ## Commands
 
 - `/camera_clip <seconds>` - capture and send a short local camera clip
+- `/camera_test` - run a short ffmpeg camera diagnostic probe
 - `/photo` - capture and send one still image
 - `/schedule_photo HH:MM` - schedule one daily still image at server-local time
 - `/cancel_schedule` - cancel the active daily photo schedule
@@ -20,6 +21,7 @@ Use BotFather `/setcommands`:
 
 ```text
 camera_clip - Capture a short local camera clip
+camera_test - Run a camera diagnostic probe
 photo - Capture one still image
 schedule_photo - Schedule one daily still image
 cancel_schedule - Cancel the daily photo schedule
@@ -37,6 +39,8 @@ TELEGRAM_BOT_TOKEN='...'
 ALLOWED_CHAT_IDS='123456789'
 ENABLE_CAMERA_CLIP_COMMAND=1
 CAMERA_CLIP_COMMAND_JSON='["ffmpeg","-f","avfoundation","-i","0:none","-t","{seconds}","-y","{output}"]'
+ENABLE_CAMERA_TEST_COMMAND=1
+CAMERA_TEST_COMMAND_JSON='["ffmpeg","-hide_banner","-f","avfoundation","-i","0:none","-t","1","-f","null","-"]'
 ENABLE_PHOTO_COMMAND=1
 PHOTO_COMMAND_JSON='["ffmpeg","-f","avfoundation","-i","0:none","-frames:v","1","-y","{output}"]'
 PHOTO_OUTPUT_FILENAME='photo.jpg'
@@ -45,6 +49,8 @@ SOUND_ALARM_COMMAND_JSON='["/usr/local/bin/home-watch-alarm","{seconds}"]'
 ```
 
 `CAMERA_CLIP_COMMAND_JSON` must be a JSON array of strings. It must include `{seconds}` and `{output}`. The Bot runs it with shell execution disabled.
+
+`/camera_test` is disabled unless `ENABLE_CAMERA_TEST_COMMAND=1`. If `CAMERA_TEST_COMMAND_JSON` is omitted, the Bot runs the verified default ffmpeg device-list probe `ffmpeg -hide_banner -f avfoundation -list_devices true -i ""` with shell execution disabled, a short timeout, ignored stdout, and bounded redacted stderr in the Telegram reply. Set `CAMERA_TEST_COMMAND_JSON` to a JSON argv array to test a specific local ffmpeg device index without shell strings.
 
 `PHOTO_COMMAND_JSON` must be a JSON array of strings. It must include `{output}`. The Bot runs it with shell execution disabled and sends the captured file through Telegram `sendPhoto` without Bot-side transcoding. `PHOTO_OUTPUT_FILENAME` controls the temporary output filename and extension; it must be a filename, not a path.
 

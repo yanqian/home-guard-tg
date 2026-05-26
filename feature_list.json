@@ -66,9 +66,9 @@
     {
       "id": "F008",
       "description": "Add /camera_test for authorized chats to run a short ffmpeg dry probe and return the last bounded stderr lines for diagnosing camera permission, device index, and timeout problems; keep it disabled unless explicitly enabled, use a configured argv array or verified ffmpeg argv without shell strings, enforce short timeout, redact secrets, never include media content, verify real ffmpeg behavior or document why direct verification was not possible, and cover default behavior with fake probe output without requiring a real camera.",
-      "passes": false,
-      "status": "todo",
-      "attempts": 0,
+      "passes": true,
+      "status": "done",
+      "attempts": 1,
       "last_error": "",
       "priority": "P2"
     }
