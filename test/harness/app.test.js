@@ -126,6 +126,46 @@ test("app handles /schedule_photo by persisting one enabled daily photo schedule
   }
 });
 
+test("app handles /cancel_schedule by clearing only active daily photo schedule state", async () => {
+  const rootDir = mkdtempSync(join(tmpdir(), "home-watch-tg-app-"));
+  const statePath = join(rootDir, "runtime_state.json");
+  let refreshCount = 0;
+  try {
+    writeFileSync(statePath, JSON.stringify({
+      telegramUpdateOffset: 7,
+      dailyPhotoSchedule: { type: "daily_photo", time: "09:30", chatId: "123" },
+    }));
+
+    const app = createApp({
+      allowedChatIds: ["123"],
+      schedulePhotoOptions: {
+        statePath,
+        onScheduleChanged() {
+          refreshCount += 1;
+        },
+      },
+    });
+
+    assert.equal(
+      (await app.handleMessage({ chatId: "123", text: "/cancel_schedule" })).response,
+      "Daily photo schedule cancelled.",
+    );
+    assert.equal(refreshCount, 1);
+    assert.deepEqual(JSON.parse(readFileSync(statePath, "utf8")), {
+      telegramUpdateOffset: 7,
+      dailyPhotoSchedule: null,
+    });
+
+    assert.equal(
+      (await app.handleMessage({ chatId: "123", text: "/cancel_schedule" })).response,
+      "No daily photo schedule is active.",
+    );
+    assert.equal(refreshCount, 1);
+  } finally {
+    rmSync(rootDir, { recursive: true, force: true });
+  }
+});
+
 test("app rejects /schedule_photo before persistence when photo config is disabled or malformed", async () => {
   const rootDir = mkdtempSync(join(tmpdir(), "home-watch-tg-app-"));
   const statePath = join(rootDir, "runtime_state.json");

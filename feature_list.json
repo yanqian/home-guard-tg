@@ -30,9 +30,9 @@
     {
       "id": "F004",
       "description": "Add /cancel_schedule for authorized chats to cancel the active daily photo schedule; clear persisted schedule state, behave idempotently when no schedule exists, report whether a schedule was cancelled or absent, and do not interrupt already-started media capture unless a later requirement explicitly requests in-flight cancellation.",
-      "passes": false,
-      "status": "todo",
-      "attempts": 0,
+      "passes": true,
+      "status": "done",
+      "attempts": 1,
       "last_error": "",
       "priority": "P1"
     },

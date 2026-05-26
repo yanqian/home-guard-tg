@@ -1,11 +1,12 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { EventEmitter } from "node:events";
-import { existsSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import {
   createDailyPhotoScheduler,
+  handleCancelSchedule,
   millisecondsUntilNextLocalTime,
   parseSchedulePhotoTime,
 } from "../../src/schedule-photo.js";
@@ -28,6 +29,46 @@ test("millisecondsUntilNextLocalTime uses server-local Date semantics", () => {
     millisecondsUntilNextLocalTime("09:00", new Date(2026, 4, 26, 9, 0, 0, 0)),
     24 * 60 * 60 * 1000,
   );
+});
+
+test("handleCancelSchedule clears persisted schedule idempotently", async () => {
+  const rootDir = mkdtempSync(join(tmpdir(), "home-watch-tg-cancel-schedule-"));
+  const statePath = join(rootDir, "runtime_state.json");
+  let refreshCount = 0;
+  try {
+    saveRuntimeState(statePath, {
+      telegramUpdateOffset: 42,
+      dailyPhotoSchedule: { type: "daily_photo", time: "09:30", chatId: "123" },
+    });
+
+    assert.deepEqual(await handleCancelSchedule({
+      statePath,
+      onScheduleChanged() {
+        refreshCount += 1;
+      },
+    }), {
+      response: "Daily photo schedule cancelled.",
+      stateChanged: true,
+    });
+    assert.equal(refreshCount, 1);
+    assert.deepEqual(JSON.parse(readFileSync(statePath, "utf8")), {
+      telegramUpdateOffset: 42,
+      dailyPhotoSchedule: null,
+    });
+
+    assert.deepEqual(await handleCancelSchedule({
+      statePath,
+      onScheduleChanged() {
+        refreshCount += 1;
+      },
+    }), {
+      response: "No daily photo schedule is active.",
+      stateChanged: false,
+    });
+    assert.equal(refreshCount, 1);
+  } finally {
+    rmSync(rootDir, { recursive: true, force: true });
+  }
 });
 
 test("createDailyPhotoScheduler sends scheduled photos through the photo reply path", async () => {

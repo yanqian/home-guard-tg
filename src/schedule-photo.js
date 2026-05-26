@@ -6,6 +6,8 @@ const SCHEDULE_PHOTO_USAGE_RESPONSE = "Usage: /schedule_photo HH:MM";
 const SCHEDULE_PHOTO_CONFIG_ERROR_RESPONSE = "Photo capture config is missing or malformed.";
 const SCHEDULE_PHOTO_DISABLED_RESPONSE = "Photo command is disabled.";
 const SCHEDULE_PHOTO_EXISTS_RESPONSE = "A daily photo schedule is already active. Run /cancel_schedule first.";
+const CANCEL_SCHEDULE_CANCELLED_RESPONSE = "Daily photo schedule cancelled.";
+const CANCEL_SCHEDULE_ABSENT_RESPONSE = "No daily photo schedule is active.";
 
 export function parseSchedulePhotoTime(value) {
   const text = String(value ?? "").trim();
@@ -80,6 +82,27 @@ export async function handleSchedulePhoto({
     response: formatSchedulePhotoCreatedResponse(time, now()),
     stateChanged: true,
   };
+}
+
+export async function handleCancelSchedule({
+  statePath,
+  onScheduleChanged,
+} = {}) {
+  if (!statePath) {
+    return { response: "Schedule state path is unavailable.", stateChanged: false };
+  }
+
+  const state = loadRuntimeState(statePath);
+  if (!state.dailyPhotoSchedule) {
+    return { response: CANCEL_SCHEDULE_ABSENT_RESPONSE, stateChanged: false };
+  }
+
+  saveRuntimeState(statePath, { ...state, dailyPhotoSchedule: null });
+  if (typeof onScheduleChanged === "function") {
+    onScheduleChanged();
+  }
+
+  return { response: CANCEL_SCHEDULE_CANCELLED_RESPONSE, stateChanged: true };
 }
 
 export function millisecondsUntilNextLocalTime(time, date = new Date()) {
@@ -172,4 +195,6 @@ export const SCHEDULE_PHOTO_RESPONSES = Object.freeze({
   disabled: SCHEDULE_PHOTO_DISABLED_RESPONSE,
   configError: SCHEDULE_PHOTO_CONFIG_ERROR_RESPONSE,
   exists: SCHEDULE_PHOTO_EXISTS_RESPONSE,
+  cancelled: CANCEL_SCHEDULE_CANCELLED_RESPONSE,
+  absent: CANCEL_SCHEDULE_ABSENT_RESPONSE,
 });

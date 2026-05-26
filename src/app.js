@@ -3,7 +3,7 @@ import { parseCommand } from "./commands.js";
 import { HELP_RESPONSE } from "./constants.js";
 import { getCameraClipStatus, handleCameraClip } from "./camera-clip.js";
 import { getPhotoStatus, handlePhoto } from "./photo.js";
-import { handleSchedulePhoto } from "./schedule-photo.js";
+import { handleCancelSchedule, handleSchedulePhoto } from "./schedule-photo.js";
 
 export function createApp({
   allowedChatIds,
@@ -45,6 +45,12 @@ export function createApp({
           statePath: schedulePhotoOptions.statePath,
           onScheduleChanged: schedulePhotoOptions.onScheduleChanged,
           now: schedulePhotoOptions.now,
+        });
+      }
+      if (parsed.command === "/cancel_schedule") {
+        return handleCancelSchedule({
+          statePath: schedulePhotoOptions.statePath,
+          onScheduleChanged: schedulePhotoOptions.onScheduleChanged,
         });
       }
 

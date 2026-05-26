@@ -25,19 +25,20 @@ Implemented behavior:
 - Daily photo schedule state is persisted in `runtime_state.json` and re-armed on Bot restart.
 - Scheduled photo captures reuse `/photo` capture timeout, cleanup, shared media-capture locking, and Telegram `sendPhoto` behavior.
 - Schedule creation reports the configured local time and server timezone context.
+- `/cancel_schedule` clears the persisted active daily photo schedule for authorized chats.
+- `/cancel_schedule` is idempotent when no schedule exists and does not interrupt an already-started media capture.
 - Default tests use fake capture and fake Telegram transport without real camera or network requirements.
 
 ## Last Completed Feature
 
-`F002` - `/photo` still image capture and Telegram send support.
+`F003` - `/schedule_photo HH:MM` daily still image scheduling.
 
 ## Next Feature
 
-`F003` - Await evaluator verification for `/schedule_photo HH:MM` daily still image scheduling.
+`F004` - Await evaluator verification for `/cancel_schedule` daily photo schedule cancellation.
 
 ## Known Issues
 
 - Real camera use depends on host camera permissions and a valid capture command such as `ffmpeg` with a correct AVFoundation device index.
 - Real photo capture depends on host camera permissions and a valid still-image command such as `ffmpeg` with a correct AVFoundation device index.
-- `/cancel_schedule` is planned as `F004`; until then, a persisted schedule can only be cleared by state maintenance or the future command.
 - Newly planned commands have no currently open implementation questions in `SPEC.md` section 3.8.
