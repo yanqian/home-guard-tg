@@ -153,3 +153,7 @@ Useful commands:
 python3 orchestrator.py --dry-run
 python3 orchestrator.py --eval-only all
 ```
+
+## License
+
+MIT License. See [LICENSE](LICENSE).
