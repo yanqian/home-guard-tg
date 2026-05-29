@@ -34,6 +34,7 @@ Implemented behavior:
 - `SOUND_ALARM_COMMAND_JSON` must be a JSON argv array template containing `{seconds}`.
 - Sound alarm playback validates integer durations from 1 through 30.
 - Sound alarm playback uses `shell=false`, ignored stdio, bounded timeout, and one active alarm at a time.
+- The local sound-alarm wrapper plays `scripts/mixkit-facility-alarm-sound-999.wav` with `afplay -t` so playback exits within the Bot timeout window.
 - Help and status output label `/sound_alarm` as cautious use.
 - `/status` reports Bot uptime, response timestamp, camera/photo enabled and valid state, active media capture state, alarm availability, Mac power telemetry when available, private local IPs, and remaining disk space.
 - Status host telemetry uses bounded local collection, avoids public-IP lookup, and degrades to `unavailable` values when telemetry is unsupported or fails.
