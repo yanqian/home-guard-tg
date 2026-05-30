@@ -1,11 +1,12 @@
 SHELL := /bin/zsh
 
-.PHONY: help start verify test unit harness contract smoke camera-devices
+.PHONY: help start start-local verify test unit harness contract smoke camera-devices
 
 help:
 	@printf '%s\n' \
 		'Targets:' \
-		'  make start          Load .env.local and start the Telegram Bot' \
+		'  make start          Start the Telegram Bot using the current environment' \
+		'  make start-local    Load .env.local and start the Telegram Bot' \
 		'  make verify         Run the full repository verification suite' \
 		'  make test           Run unit, harness, contract, and smoke tests' \
 		'  make unit           Run unit tests' \
@@ -15,6 +16,9 @@ help:
 		'  make camera-devices List macOS AVFoundation camera devices'
 
 start:
+	@npm run start
+
+start-local:
 	@set -a; \
 	source .env.local; \
 	set +a; \

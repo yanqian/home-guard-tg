@@ -59,7 +59,7 @@ export async function sendTelegramReply({
         chatId,
         photoPath: reply.telegramPhoto.path,
         fileName: reply.telegramPhoto.fileName,
-        caption: reply.telegramPhoto.caption ?? reply.text,
+        caption: reply.telegramPhoto.caption ?? reply.text ?? reply.response,
         fetchImpl,
       });
     } catch (error) {
@@ -82,7 +82,7 @@ export async function sendTelegramReply({
         botToken,
         chatId,
         videoPath: reply.telegramVideo.path,
-        caption: reply.telegramVideo.caption ?? reply.text,
+        caption: reply.telegramVideo.caption ?? reply.text ?? reply.response,
         fetchImpl,
       });
     } catch (error) {
@@ -102,7 +102,14 @@ export async function sendTelegramReply({
   await sendTelegramMessage({
     botToken,
     chatId,
-    text: typeof reply === "string" ? reply : String(reply?.text ?? ""),
+    text: formatReplyText(reply),
     fetchImpl,
   });
+}
+
+function formatReplyText(reply) {
+  if (typeof reply === "string") {
+    return reply;
+  }
+  return String(reply?.text ?? reply?.response ?? "");
 }

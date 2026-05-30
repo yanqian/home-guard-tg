@@ -39,6 +39,25 @@ test("sendTelegramMessage validates Telegram response success", async () => {
   );
 });
 
+test("sendTelegramReply sends object response text", async () => {
+  const calls = [];
+  await sendTelegramReply({
+    botToken: "token",
+    chatId: "123",
+    reply: { response: "Photo capture failed.", stateChanged: false },
+    fetchImpl(url, options) {
+      calls.push({ url, options });
+      return Promise.resolve({ ok: true, json: () => Promise.resolve({ ok: true }) });
+    },
+  });
+
+  assert.equal(calls[0].url, "https://api.telegram.org/bottoken/sendMessage");
+  assert.deepEqual(JSON.parse(calls[0].options.body), {
+    chat_id: "123",
+    text: "Photo capture failed.",
+  });
+});
+
 test("sendTelegramReply sends videos and cleans up media", async () => {
   const tempDir = mkdtempSync(join(tmpdir(), "home-guard-tg-video-"));
   const videoPath = join(tempDir, "clip.mp4");

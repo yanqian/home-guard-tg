@@ -21,7 +21,7 @@ Keep this token out of git.
 
 ## 2. Set The Bot Command Menu
 
-In `@BotFather`, send `/setcommands`, choose your Bot, and paste:
+Use BotFather `/setcommands` with this command menu:
 
 ```text
 camera_clip - Capture a short local camera clip
