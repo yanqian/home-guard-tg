@@ -28,8 +28,7 @@ The screenshots are intentionally redacted. Do not commit real home camera foota
 <table>
   <tr>
     <td><img src="docs/assets/demo_chat_status.PNG" alt="Bot status in Telegram" width="320"></td>
-    <td><img src="docs/assets/demo_chat_video.PNG" alt="Camera clip sent in Telegram" width="320"></td>
-    <td><img src="docs/assets/chat_demo_alarm.PNG" alt="Sound alarm response in Telegram" width="320"></td>
+    <td><img src="docs/assets/chat_demo_features.PNG" alt="Bot features shown in Telegram" width="320"></td>
   </tr>
 </table>
 
