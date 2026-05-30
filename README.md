@@ -19,6 +19,20 @@ The first working version took about ten minutes. It ran, sent a clip, and earne
 
 All sensitive operations are restricted to configured Telegram chat IDs.
 
+## Demo
+
+These screenshots show the Bot running in Telegram on a phone:
+
+The screenshots are intentionally redacted. Do not commit real home camera footage, Telegram tokens, chat IDs, or private room details.
+
+<table>
+  <tr>
+    <td><img src="docs/assets/demo_chat_status.PNG" alt="Bot status in Telegram" width="320"></td>
+    <td><img src="docs/assets/demo_chat_video.PNG" alt="Camera clip sent in Telegram" width="320"></td>
+    <td><img src="docs/assets/chat_demo_alarm.PNG" alt="Sound alarm response in Telegram" width="320"></td>
+  </tr>
+</table>
+
 ## Commands
 
 | Command | Purpose |
@@ -32,6 +46,22 @@ All sensitive operations are restricted to configured Telegram chat IDs.
 | `/logs` | Show recent Bot-owned runtime errors only. |
 | `/status` | Show Bot, media, alarm, and host status. |
 | `/help` | Show the command list. |
+
+## BotFather Command Menu
+
+Use BotFather `/setcommands` with this command menu:
+
+```text
+camera_clip - Capture a short local camera clip
+camera_test - Run a camera diagnostic probe
+photo - Capture one still image
+schedule_photo - Schedule one daily still image
+cancel_schedule - Cancel the daily photo schedule
+sound_alarm - Play a local audible alert; cautious use only
+logs - Show recent Bot runtime errors
+status - Show Bot status
+help - Show commands
+```
 
 ## Requirements
 
